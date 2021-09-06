@@ -2,7 +2,7 @@
 
 ## Setup
 
-To do.
+Coming soon...
 
 
 ## Authentication
@@ -31,7 +31,7 @@ auth.login('john.smith@email.com', 'abcde123456')
 #### Renew authentication
 This async method uses the current stored tokens to renew the authentication. New tokens will be stored locally.
 ```js
-authenticator.refresh()
+auth.refresh()
 ```
 
 ### Automatic Refresh
