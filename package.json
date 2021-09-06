@@ -1,0 +1,27 @@
+{
+  "name": "milkman-api-js-client",
+  "version": "0.0.1",
+  "main": "dist/index.min.js",
+  "module": "dist/index.esm.min.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "license": "MIT",
+  "scripts": {
+    "bundle": "bili --format esm-min --format cjs-min",
+    "test": "jest"
+  },
+  "dependencies": {
+    "isomorphic-fetch": "^3.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.0",
+    "@babel/preset-env": "^7.15.0",
+    "@babel/preset-typescript": "^7.15.0",
+    "@types/jest": "^27.0.1",
+    "bili": "^5.0.5",
+    "jest": "^27.1.0",
+    "rollup": "^2.56.3",
+    "rollup-plugin-typescript2": "^0.30.0",
+    "typescript": "^4.4.2"
+  }
+}
