@@ -19,10 +19,10 @@ export declare class ApiClient {
     composeUrl(url: string): string;
     composeHeaders(customHeaders?: ApiHeader): ApiHeader;
     composeOptions(method: any, customOptions?: ApiOptions): ApiOptions;
-    fetch(method: any, url: any, options: any): Promise<Response>;
-    get(url: string, options: any): void;
-    post(url: string, data: any, options: any): void;
-    put(url: string, data: any, options: any): void;
-    patch(url: string, data: any, options: any): void;
-    delete(url: string, options: any): void;
+    fetch(method: string, url: string, options?: any): Promise<Response>;
+    get(url: string, options?: any): void;
+    post(url: string, data: any, options?: any): void;
+    put(url: string, data: any, options?: any): void;
+    patch(url: string, data: any, options?: any): void;
+    delete(url: string, options?: any): void;
 }

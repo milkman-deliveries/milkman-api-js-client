@@ -48,39 +48,39 @@ export class ApiClient {
     }
   }
 
-  fetch(method, url, options) {
+  fetch(method: string, url: string, options?: any) {
     return fetch(
       this.composeUrl(url),
       this.composeOptions(method, options)
     )
   }
 
-  get(url: string, options: any) {
+  get(url: string, options?: any) {
     this.fetch('GET', url, options)
   }
 
-  post(url: string, data: any, options: any) {
+  post(url: string, data: any, options?: any) {
     this.fetch('POST', url, {
       body: JSON.stringify(data),
       ...options
     })
   }
 
-  put(url: string, data: any, options: any) {
+  put(url: string, data: any, options?: any) {
     this.fetch('PUT', url, {
       body: JSON.stringify(data),
       ...options
     })
   }
 
-  patch(url: string, data: any, options: any) {
+  patch(url: string, data: any, options?: any) {
     this.fetch('PATCH', url, {
       body: JSON.stringify(data),
       ...options
     })
   }
 
-  delete(url: string, options: any) {
+  delete(url: string, options?: any) {
     this.fetch('DELETE', url, options)
   }
 }
