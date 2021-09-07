@@ -6,9 +6,6 @@
 # dependencies
 /node_modules
 
-# bundle
-/dist
-
 # misc
 .DS_Store
 npm-debug.log*
