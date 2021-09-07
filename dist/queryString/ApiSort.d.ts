@@ -5,7 +5,7 @@ export declare enum ApiSortValue {
 /**
  * An utility to compose a "sort" parameter.
  */
-declare class ApiSort {
+export declare class ApiSort {
     sort: {
         [ruleType: string]: ApiSortValue;
     };
@@ -30,4 +30,3 @@ declare class ApiSort {
      */
     toString(): string;
 }
-export default ApiSort;

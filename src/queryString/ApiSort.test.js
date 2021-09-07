@@ -1,4 +1,4 @@
-import ApiSort from './ApiSort'
+import { ApiSort } from './ApiSort'
 
 describe('ApiSort', () => {
 

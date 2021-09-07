@@ -10,7 +10,7 @@ export declare enum ApiQueryRuleType {
 /**
  * An utility to compose a "query" parameter using Milkman "query language".
  */
-declare class ApiQuery {
+export declare class ApiQuery {
     query: {
         [ruleType: string]: any;
     };
@@ -55,4 +55,3 @@ declare class ApiQuery {
      */
     toString(): string;
 }
-export default ApiQuery;

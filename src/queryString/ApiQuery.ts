@@ -11,7 +11,7 @@ export enum ApiQueryRuleType {
 /**
  * An utility to compose a "query" parameter using Milkman "query language".
  */
-class ApiQuery {
+export class ApiQuery {
   query: { [ruleType: string]: any } = {}
 
   /**
@@ -94,5 +94,3 @@ class ApiQuery {
     return JSON.stringify(this.query)
   }
 }
-
-export default ApiQuery

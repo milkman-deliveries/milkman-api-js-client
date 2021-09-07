@@ -6,7 +6,7 @@ export enum ApiSortValue {
 /**
  * An utility to compose a "sort" parameter.
  */
-class ApiSort {
+export class ApiSort {
   sort: { [ruleType: string]: ApiSortValue } = {}
 
   /**
@@ -46,5 +46,3 @@ class ApiSort {
     return JSON.stringify(this.sort)
   }
 }
-
-export default ApiSort

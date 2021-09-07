@@ -1,4 +1,4 @@
-import ApiQuery from './ApiQuery'
+import { ApiQuery } from './ApiQuery'
 
 describe('ApiQuery', () => {
 
