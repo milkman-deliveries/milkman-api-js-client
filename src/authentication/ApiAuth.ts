@@ -96,10 +96,7 @@ export class ApiAuth {
       baseUrl: this.milkmanBaseUrl,
       enhancers: [cognitoHeaderEnhancer]
     })
-    return api.post('/milkman/resolveUser', {
-      loginSource: 'Web',
-      rememberMe: true
-    })
+    return api.get('/milkman/resolveUser?loginSource=Web&rememberMe=true')
   }
 
   scheduleAutomaticRefresh() {
