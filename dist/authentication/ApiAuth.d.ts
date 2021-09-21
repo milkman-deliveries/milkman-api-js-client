@@ -11,12 +11,16 @@ export interface ApiAuthConfig {
     clientId: string;
     automaticRefresh?: boolean;
     refreshTimeoutMs?: number;
+    useMilkmanSession: boolean;
+    milkmanBaseUrl?: string;
 }
 export declare class ApiAuth {
     application: string;
     clientId: string;
     automaticRefresh: boolean;
     refreshTimeoutMs: number;
+    useMilkmanSession: boolean;
+    milkmanBaseUrl?: string;
     sessionTimeout: NodeJS.Timeout;
     constructor(config: ApiAuthConfig);
     /**
@@ -26,11 +30,15 @@ export declare class ApiAuth {
     /**
      * Calls Cognito, asking for ID token and refresh Token.
      */
-    cognitoLogin(username: string, password: string): Promise<Response>;
+    _cognitoLogin(username: string, password: string): Promise<Response>;
     /**
      * Calls Cognito, asking for a new ID token.
      */
-    cognitoRefresh(): Promise<Response>;
+    _cognitoRefresh(): Promise<Response>;
+    /**
+     * Calls POST /milkman/resolveUser, retrieving Milkman session token.
+     */
+    _resolveUser(): Promise<Response>;
     scheduleAutomaticRefresh(): void;
     /**
      * Authenticate via Cognito and store ID and Refresh tokens in session storage.

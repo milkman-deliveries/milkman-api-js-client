@@ -33,7 +33,7 @@ describe('ApiAuth', () => {
       const auth = new ApiAuth(authBasicConfig)
       const fetch = mockFetch()
       auth
-        .cognitoLogin('username', 'password')
+        ._cognitoLogin('username', 'password')
         .then(([url, options]) => {
           expect(fetch).toHaveBeenCalled()
           expect(options).toEqual({
@@ -59,7 +59,7 @@ describe('ApiAuth', () => {
       const auth = new ApiAuth(authBasicConfig)
       const fetch = mockFetch()
       auth
-        .cognitoRefresh('username', 'password')
+        ._cognitoRefresh('username', 'password')
         .then(([url, options]) => {
           expect(fetch).toHaveBeenCalled()
           expect(options).toEqual({

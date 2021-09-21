@@ -1,6 +1,7 @@
 import 'isomorphic-fetch'
-import { clearTimeout } from 'timers'
-import { retrieveRefreshToken, storeIdToken, storeRefreshToken } from '../utils/session'
+import {retrieveRefreshToken, storeIdToken, storeRefreshToken, storeSessionToken} from '../utils/session'
+import {ApiClient} from '../api/ApiClient'
+import {cognitoHeaderEnhancer} from './enhancers'
 
 export const COGNITO_ENDPOINT = 'https://auth.milkmantechnologies.com/'
 export const COGNITO_TOKEN_TIMEOUT = 55 * 60 * 1000 // 55 minutes
@@ -15,6 +16,9 @@ export interface ApiAuthConfig {
   clientId: string
   automaticRefresh?: boolean
   refreshTimeoutMs?: number
+  // old authentication
+  useMilkmanSession: boolean
+  milkmanBaseUrl?: string
 }
 
 export class ApiAuth {
@@ -22,6 +26,10 @@ export class ApiAuth {
   clientId: string
   automaticRefresh: boolean
   refreshTimeoutMs: number
+  // old authentication
+  useMilkmanSession: boolean
+  milkmanBaseUrl?: string
+
   sessionTimeout: NodeJS.Timeout
 
   constructor(config: ApiAuthConfig) {
@@ -29,6 +37,9 @@ export class ApiAuth {
     this.clientId = config.clientId
     this.automaticRefresh = config.automaticRefresh || false
     this.refreshTimeoutMs = config.refreshTimeoutMs || COGNITO_TOKEN_TIMEOUT
+    // old authentication
+    this.useMilkmanSession = config.useMilkmanSession || false
+    this.milkmanBaseUrl = config.milkmanBaseUrl || '/'
   }
 
   /**
@@ -38,10 +49,12 @@ export class ApiAuth {
     return `${COGNITO_ENDPOINT}${this.application}/login`
   }
 
+  /* API calls */
+
   /**
    * Calls Cognito, asking for ID token and refresh Token.
    */
-  cognitoLogin(username: string, password: string) {
+  _cognitoLogin(username: string, password: string) {
     return fetch(this.authUrl, {
       method: 'POST',
       headers: {
@@ -61,10 +74,10 @@ export class ApiAuth {
   /**
    * Calls Cognito, asking for a new ID token.
    */
-  cognitoRefresh() {
+  _cognitoRefresh() {
     return fetch(this.authUrl, {
       method: 'POST',
-      headers: { Accept: 'application/json' },
+      headers: {Accept: 'application/json'},
       body: JSON.stringify({
         ClientId: this.clientId,
         AuthFlow: AuthenticationMethod.REFRESH_TOKEN,
@@ -72,6 +85,20 @@ export class ApiAuth {
           REFRESH_TOKEN: retrieveRefreshToken(),
         }
       })
+    })
+  }
+
+  /**
+   * Calls POST /milkman/resolveUser, retrieving Milkman session token.
+   */
+  _resolveUser(): Promise<Response> {
+    const api = new ApiClient({
+      baseUrl: this.milkmanBaseUrl,
+      enhancers: [cognitoHeaderEnhancer]
+    })
+    return api.post('/milkman/resolveUser', {
+      loginSource: 'Web',
+      rememberMe: true
     })
   }
 
@@ -89,13 +116,18 @@ export class ApiAuth {
    * Depending on the configuration, it can schedules an automatic authentication refresh.
    */
   async login(username: string, password: string): Promise<boolean> {
-    const { AuthenticationResult, error } = await this.cognitoLogin(username, password).then(res => res.json())
+    const {AuthenticationResult, error} = await this._cognitoLogin(username, password).then(res => res.json())
     if (error || !AuthenticationResult) {
       return Promise.reject(error)
     }
-    const { IdToken, RefreshToken } = AuthenticationResult
+    const {IdToken, RefreshToken} = AuthenticationResult
     storeIdToken(IdToken)
     storeRefreshToken(RefreshToken)
+
+    if (this.useMilkmanSession) {
+      const {session} = await this._resolveUser().then(res => res.json())
+      storeSessionToken(session)
+    }
 
     if (this.automaticRefresh) {
       this.scheduleAutomaticRefresh()
@@ -109,12 +141,17 @@ export class ApiAuth {
    * then store the new ID token in session storage.
    */
   async refresh(): Promise<boolean> {
-    const { AuthenticationResult, error } = await this.cognitoRefresh().then(res => res.json())
+    const {AuthenticationResult, error} = await this._cognitoRefresh().then(res => res.json())
     if (error || !AuthenticationResult) {
       return Promise.reject(error)
     }
-    const { IdToken } = AuthenticationResult
+    const {IdToken} = AuthenticationResult
     storeIdToken(IdToken)
+
+    if (this.useMilkmanSession) {
+      const {session} = await this._resolveUser().then(res => res.json())
+      storeSessionToken(session)
+    }
 
     if (this.automaticRefresh) {
       this.scheduleAutomaticRefresh()

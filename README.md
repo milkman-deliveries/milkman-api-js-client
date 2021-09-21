@@ -2,52 +2,10 @@
 
 ## Setup
 
-Coming soon...
-
-
-## Authentication
-
-To call Milkman services you first need to obtain an authentication token.
-To do so, the `ApiAuth` class provides methods to manage the user authentication.
-
-### Usage
-
-#### Create an instance of ApiAuth
-```js
-import { ApiAuth } from 'milkman-api-js-client'
-
-const auth = new ApiAuth({
-  application: 'myApplication',
-  clientId: '1234560'
-})
+Add dependency to the `package.json`
 ```
-
-#### First login
-This async method will contact the authentication service and store required tokens locally.
-```js
-auth.login('john.smith@email.com', 'abcde123456')
+"milkman-api-js-client": "git+https://github.com/milkman-deliveries/milkman-api-js-client.git"
 ```
-
-#### Renew authentication
-This async method uses the current stored tokens to renew the authentication. New tokens will be stored locally.
-```js
-auth.refresh()
-```
-
-### Automatic Refresh
-It's possible to let `ApiAuth` manage the authentication renewal automatically.
-
-#### Configuration
-```js
-const auth = new ApiAuth({
-  application: 'myApplication',
-  clientId: '1234560',
-  automaticRefresh: true,
-  refreshTimeoutMs: 600000 // 10 minutes. Optional. Default is 55 minutes.
-})
-```
-
-After the fist call to the `login`, the `refresh` method will be automatically called each time the timeout fired.
 
 ## API call
 
@@ -174,4 +132,106 @@ You can also "chain" rules:
 const sort = new ApiSort()
   .asc('name')
   .desc('age')
+```
+
+## Authentication
+
+To call Milkman services you first need to obtain an authentication token.
+To do so, the `ApiAuth` class provides methods to manage the user authentication.
+
+### Usage
+
+#### Create an instance of ApiAuth
+```js
+import { ApiAuth } from 'milkman-api-js-client'
+
+const auth = new ApiAuth({
+  application: 'myApplication',
+  clientId: '1234560'
+})
+```
+
+#### First login
+This async method will contact the authentication service and store required tokens locally.
+```js
+auth.login('john.smith@email.com', 'abcde123456')
+```
+
+#### Renew authentication
+This async method uses the current stored tokens to renew the authentication. New tokens will be stored locally.
+```js
+auth.refresh()
+```
+
+### Enhance API requests
+
+To easily provide authorization token to any API request, use the optional `enhancers` parameter.
+
+`cognitoHeaderEnhancer` enhancer automatically set the Cognito 'bearer' token in the request header.
+```js
+import { ApiClient, cognitoHeaderEnhancer } from 'milkman-api-js-client'
+
+const apiClient = new ApiClient({
+  enhancers: [cognitoHeaderEnhancer]
+})
+```
+
+#### Old Version
+
+To use the old authentication, add the `sessionHeaderEnhancer` too.
+```js
+import {
+  ApiClient,
+  cognitoHeaderEnhancer,
+  sessionHeaderEnhancer
+} from 'milkman-api-js-client'
+
+const apiClient = new ApiClient({
+  enhancers: [cognitoHeaderEnhancer, sessionHeaderEnhancer]
+})
+```
+
+### Automatic Refresh
+It's possible to let `ApiAuth` manage the authentication renewal automatically.
+
+#### Configuration
+```js
+const auth = new ApiAuth({
+  application: 'myApplication',
+  clientId: '1234560',
+  automaticRefresh: true,
+  refreshTimeoutMs: 600000 // 10 minutes. Optional. Default is 55 minutes.
+})
+```
+
+After the fist call to the `login`, the `refresh` method will be automatically called each time the timeout fired.
+
+### Old (deprecated) Milkman authentication
+
+To use the old authentication, set the `useMilkmanSession` to `true`, and pass the `milkmanBaseUrl`.
+
+#### Configure ApiAuth
+```js
+const auth = new ApiAuth({
+  application: 'myApplication',
+  clientId: '1234560',
+  useMilkmanSession: true,
+  milkmanBaseUrl: 'https://test.milkmantechnologies.com/'
+})
+```
+
+#### Enhance ApiClient
+
+To use the old authentication, add the `sessionHeaderEnhancer` too.
+
+```js
+import {
+  ApiClient,
+  cognitoHeaderEnhancer,
+  sessionHeaderEnhancer
+} from 'milkman-api-js-client'
+
+const apiClient = new ApiClient({
+  enhancers: [cognitoHeaderEnhancer, sessionHeaderEnhancer]
+})
 ```

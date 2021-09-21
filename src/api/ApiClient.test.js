@@ -1,5 +1,5 @@
 import { ApiClient } from './ApiClient'
-import { retrieveIdToken } from './utils/session'
+import { retrieveIdToken } from '../utils/session'
 
 // const api = new ApiClient({ baseUrl: 'https://www.test.it' })
 //
@@ -67,7 +67,7 @@ describe('ApiSort', () => {
         authorization: `Bearer TEST_ID_TOKEN`,
       }
 
-      expect(api.composeOptions('GET')).toEqual({
+      expect(api.composeRequest('GET')).toEqual({
         method: 'GET',
         headers
       })
@@ -87,7 +87,7 @@ describe('ApiSort', () => {
         }
       }
 
-      expect(api.composeOptions('GET', options)).toEqual({
+      expect(api.composeRequest('GET', options)).toEqual({
         method: 'GET',
         headers: {
           ...headers,
