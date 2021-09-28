@@ -53,6 +53,123 @@ apiClient.put('/v99/foo', data, options)
 
 The specified options will be passed down to the "fetch" primitive with no difference, except for the "authentication" header, that will always be injected.
 
+## Filtering
+This library provides an utility, called `ApiFilter`, to easily compose filtered requests:
+
+```js
+const filter = new ApiFilter()
+filter.eq('id', 123456)
+filter.gt('date', '2021-12-31')
+filter.in('status', ['committed', 'unassigned', 'baselineReady'])
+
+apiClient.get(`/v99/foo?${filter}`)
+```
+
+#### Rules
+```js
+// equals
+filter.eq('id', 123456)
+filter.eq('name', 'John')
+
+// not equals
+filter.ne('id', 123456)
+filter.ne('name', 'John')
+
+// greater than
+filter.gt('age', 18)
+
+// greater than or equal
+filter.ge('age', 18)
+
+// less than
+filter.lt('age', 18)
+
+// less than or equal
+filter.le('age', 18)
+
+// one of specified values
+filter.in('name', ['John', 'jack'])
+filter.in('age', [18, 21, 30])
+```
+
+It will compose the filtering parameters as the following:
+```
+id=123456
+date[gt]=2021-12-31
+status[in]=committed,unassigned,baselineReady
+```
+
+and the resulting URL will looks like this:
+
+`/v99/foo?id=123456&date[gt]=2021-12-31&status[in]=committed,unassigned,baselineReady`
+
+## Sorting
+This library provides an utility, called `ApiSort`, to easily compose sorted requests:
+
+```js
+const sort = new ApiSort()
+sort.asc('name')
+sort.desc('date')
+
+apiClient.get(`/v99/foo?${sort}`)
+```
+
+The resulting URL will looks like this:
+
+`/v99/foo?sort=name:asc,date:desc`
+
+## Lazy Loading
+`ApiLazyLoading` is an utility to easily create lazy-loading requests:
+
+```js
+const lazyLoading = new ApiLazyLoading()
+
+// ask first 50 items
+lazyLoading.setLimit(50)
+apiClient.get(`/v99/foo?${lazyLoading}`)
+
+// ask next 50 items
+apiClient.get(`/v99/foo?${lazyLoading}`)
+
+// ask next 30 items
+lazyLoading.setLimit(30)
+apiClient.get(`/v99/foo?${lazyLoading}`)
+```
+
+## Pagination
+`ApiPagination` is an utility to easily create paginated requests:
+
+```js
+const pagination = new ApiPagination(50)
+
+// ask items from 0 to 49 (page 1)
+pagination.setPage(1)
+apiClient.get(`/v99/foo?${pagination}`)
+
+// ask items from 150 to 199 (page 4)
+pagination.setPage(4)
+apiClient.get(`/v99/foo?${pagination}`)
+```
+
+## Compose Utilities
+We can easily use all the utility together:
+```js
+const filter = new ApiFilter()
+filters.gt('date', '2021-12-31')
+
+const sort = new ApiSort()
+sort.asc('name')
+
+const pagination = new ApiPagination(50)
+pagination.setPage(1)
+
+apiClient.get(`/v99/foo?${filter}&${sort}&${pagination}`)
+```
+
+
+#Legacy
+The following are a set of utilities to make legacy API calls.
+
 ## Querying
 Milkman internal API uses an opinionated query language, based on a "stringified" JSON passed to a query-string parameter called "query".
 
@@ -61,9 +178,10 @@ Milkman internal API uses an opinionated query language, based on a "stringified
 apiClient.get('/v99/foo?query={"id":{"$eq":123456}}')
 ```
 
-This library provides an utility, called `ApiQuery`, to easily compose such a requests:
+This library provides an utility, called `LegacyApiQuery`, to easily compose such a requests:
+
 ```js
-const query = new ApiQuery()
+const query = new LegacyApiQuery()
 query.eq('id', 123456)
 
 apiClient.get(`/v99/foo?query=${query}`)
@@ -97,16 +215,18 @@ query.in('age', [18, 21, 30])
 ```
 
 You can also "chain" conditions:
+
 ```js
-const query = new ApiQuery()
+const query = new LegacyApiQuery()
   .gt('size', 10)
   .lt('size', 99)
   .in('status', ['Committed', 'InTransit'])
 ```
 
 Or add custom type of rules:
+
 ```js
-const query = new ApiQuery()
+const query = new LegacyApiQuery()
   .addRule('size', '$custom', 'test')
 ```
 
@@ -119,17 +239,19 @@ Also "sorting" has its own opinionated syntax, similar to the "query" one.
 apiClient.get('/v99/foo?sort={"name":1') // sort by name, ascending
 ```
 
-`ApiSort` is another utility to compose the object for the `sort` query-string parameter.
+`LegacyApiSort` is another utility to compose the object for the `sort` query-string parameter.
+
 ```js
-const sort = new ApiSort()
+const sort = new LegacyApiSort()
 sort.asc('name')
 
 apiClient.get(`/v99/foo?sort=${sort}`)
 ```
 
 You can also "chain" rules:
+
 ```js
-const sort = new ApiSort()
+const sort = new LegacyApiSort()
   .asc('name')
   .desc('age')
 ```
