@@ -1,17 +1,12 @@
 import 'isomorphic-fetch'
-import {retrieveIdToken} from '../utils/session'
-import {RequestEnhancer} from "./RequestEnhancer";
+import {RequestEnhancer} from './RequestEnhancer'
+import {defaultHeaders} from '../utils/headers'
 
 export interface ApiConfig {
   /** Base url for every API call. Default is "/". */
   baseUrl?: string,
   /** List of enhancers for API requests. */
   enhancers?: RequestEnhancer[]
-}
-
-export const defaultHeaders = {
-  Accept: 'application/json',
-  'Content-Type': 'application/json'
 }
 
 export class ApiClient {
@@ -31,7 +26,7 @@ export class ApiClient {
   }
 
   composeRequest(method, customOptions: RequestInit = {}): RequestInit {
-    const { headers, ...otherOptions } = customOptions
+    const {headers, ...otherOptions} = customOptions
     const request = {
       method,
       headers: {

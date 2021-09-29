@@ -1,12 +1,5 @@
 import { ApiClient } from './ApiClient'
-import { retrieveIdToken } from '../utils/session'
-
-// const api = new ApiClient({ baseUrl: 'https://www.test.it' })
-//
-// const query = new ApiQuery().eq('test')
-// const sort = new ApiSort().asc('name')
-//
-// api.get(`/milkman/orders?query=${query}&sort=${sort}`)
+import { retrieveIdToken } from '../authentication/session'
 
 jest.mock('./utils/session', () => ({
   __esModule: true,

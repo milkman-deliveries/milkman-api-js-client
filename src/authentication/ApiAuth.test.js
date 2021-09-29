@@ -1,5 +1,5 @@
 import { mockFetch } from '../../jest/mocks/fetch.mock'
-import { retrieveRefreshToken, storeIdToken } from '../utils/session'
+import { retrieveRefreshToken, storeIdToken } from './session'
 import { ApiAuth, AuthenticationMethod, COGNITO_ENDPOINT } from './ApiAuth'
 
 const authBasicConfig = {
@@ -24,7 +24,7 @@ describe('ApiAuth', () => {
   describe('authUrl', () => {
     it('compose application auth endpoint', () => {
       const auth = new ApiAuth(authBasicConfig)
-      expect(auth.authUrl).toEqual(`${COGNITO_ENDPOINT}test/login`)
+      expect(auth.cognitoAuthUrl).toEqual(`${COGNITO_ENDPOINT}test/login`)
     })
   })
 
