@@ -3,6 +3,7 @@
 ## Setup
 
 Add dependency to the `package.json`
+
 ```
 "milkman-api-js-client": "git+https://github.com/milkman-deliveries/milkman-api-js-client.git"
 ```
@@ -10,10 +11,12 @@ Add dependency to the `package.json`
 ## API call
 
 `ApiClient` class provides helpful methods to easily do API calls to milkman services.
+
 - Uses a polyfill fetch library for cross-browser compatibility.
 - Automatically retrieves last authentication token and inject it in any request header.
 
 ### Create an instance of ApiClient
+
 ```js
 import { ApiClient } from 'milkman-api-js-client'
 
@@ -23,7 +26,9 @@ const apiClient = new ApiClient({
 ```
 
 ### Basic usage
+
 The 99% of the requests can be done only calling one of the following methods.
+
 ```js
 apiClient.get('/v99/foo')
 apiClient.delete('/v99/foo')
@@ -31,11 +36,16 @@ apiClient.post('/v99/foo', data)
 apiClient.path('/v99/foo', data)
 apiClient.put('/v99/foo', data)
 ```
+
 - The `url` specified is prefixed with the `baseUrl`.
-- POST, PATCH and PUT methods have an additional `data` parameter, that is "stringified" and put in the body of the request.
+- POST, PATCH and PUT methods have an additional `data` parameter, that is "stringified" and put in the body of the
+  request.
 
 ### Custom Fetch option
-If you need to customize your request, each method has an additional `options` parameter, accepting all "fetch API" settings (see [fetch options](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch#supplying_request_options)).
+
+If you need to customize your request, each method has an additional `options` parameter, accepting all "fetch API"
+settings (
+see [fetch options](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch#supplying_request_options)).
 
 ```js
 const options = {
@@ -51,9 +61,11 @@ apiClient.path('/v99/foo', data, options)
 apiClient.put('/v99/foo', data, options)
 ```
 
-The specified options will be passed down to the "fetch" primitive with no difference, except for the "authentication" header, that will always be injected.
+The specified options will be passed down to the "fetch" primitive with no difference, except for the "authentication"
+header, that will always be injected.
 
 ## Filtering
+
 This library provides an utility, called `ApiFilter`, to easily compose filtered requests:
 
 ```js
@@ -65,34 +77,8 @@ filter.in('status', ['committed', 'unassigned', 'baselineReady'])
 apiClient.get(`/v99/foo?${filter}`)
 ```
 
-#### Rules
-```js
-// equals
-filter.eq('id', 123456)
-filter.eq('name', 'John')
-
-// not equals
-filter.ne('id', 123456)
-filter.ne('name', 'John')
-
-// greater than
-filter.gt('age', 18)
-
-// greater than or equal
-filter.ge('age', 18)
-
-// less than
-filter.lt('age', 18)
-
-// less than or equal
-filter.le('age', 18)
-
-// one of specified values
-filter.in('name', ['John', 'jack'])
-filter.in('age', [18, 21, 30])
-```
-
 It will compose the filtering parameters as the following:
+
 ```
 id=123456
 date[gt]=2021-12-31
@@ -103,7 +89,30 @@ and the resulting URL will looks like this:
 
 `/v99/foo?id=123456&date[gt]=2021-12-31&status[in]=committed,unassigned,baselineReady`
 
+#### Ooperators
+
+The set of possible operators
+
+| Operator | Meaning | Ex. usage | Ex. result |
+| --- | --- | --- | --- |
+| eq | "equals" | `filter.eq('name', 'Mario')` | `name=Mario` |
+| ne | "not equals" | `filter.ne('name', 'Mario')` | `name[ne]=Mario` |
+| gt | "greater than" | `filter.gt('date', '2021-12-31')` | `date[gt]=2021-12-31` |
+| ge | "greater than or equal" | `filter.ge('date', '2021-12-31')` | `date[ge]=2021-12-31` |
+| lt | "less than" | `filter.lt('date', '2021-12-31')` | `date[lt]=2021-12-31` |
+| le | "less than or equal" | `filter.le('date', '2021-12-31')` | `date[le]=2021-12-31` |
+| in | "one of the values" | `filter.in('name', ['v1', 'v2', 'v3'])` | `name[in]=v1,v2,v3` |
+
+#### Custom Operator
+
+If required, a custom operator can be specified calling the `addRule` method:
+
+```js
+filter.addRule('param', 'customOp', 'value') // param[customOp]=value
+```
+
 ## Sorting
+
 This library provides an utility, called `ApiSort`, to easily compose sorted requests:
 
 ```js
@@ -119,6 +128,7 @@ The resulting URL will looks like this:
 `/v99/foo?sort=name:asc,date:desc`
 
 ## Lazy Loading
+
 `ApiLazyLoading` is an utility to easily create lazy-loading requests:
 
 ```js
@@ -137,6 +147,7 @@ apiClient.get(`/v99/foo?${lazyLoading}`)
 ```
 
 ## Pagination
+
 `ApiPagination` is an utility to easily create paginated requests:
 
 ```js
@@ -152,7 +163,9 @@ apiClient.get(`/v99/foo?${pagination}`)
 ```
 
 ## Compose Utilities
+
 We can easily use all the utility together:
+
 ```js
 const filter = new ApiFilter()
 filters.gt('date', '2021-12-31')
@@ -166,14 +179,17 @@ pagination.setPage(1)
 apiClient.get(`/v99/foo?${filter}&${sort}&${pagination}`)
 ```
 
+# Legacy
 
-#Legacy
 The following are a set of utilities to make legacy API calls.
 
 ## Querying
-Milkman internal API uses an opinionated query language, based on a "stringified" JSON passed to a query-string parameter called "query".
+
+Milkman internal API uses an opinionated query language, based on a "stringified" JSON passed to a query-string
+parameter called "query".
 
 #### Example
+
 ```js
 apiClient.get('/v99/foo?query={"id":{"$eq":123456}}')
 ```
@@ -188,6 +204,7 @@ apiClient.get(`/v99/foo?query=${query}`)
 ```
 
 #### Rules
+
 ```js
 // equals
 query.eq('id', 123456)
@@ -235,6 +252,7 @@ const query = new LegacyApiQuery()
 Also "sorting" has its own opinionated syntax, similar to the "query" one.
 
 #### Example
+
 ```js
 apiClient.get('/v99/foo?sort={"name":1') // sort by name, ascending
 ```
@@ -258,12 +276,13 @@ const sort = new LegacyApiSort()
 
 ## Authentication
 
-To call Milkman services you first need to obtain an authentication token.
-To do so, the `ApiAuth` class provides methods to manage the user authentication.
+To call Milkman services you first need to obtain an authentication token. To do so, the `ApiAuth` class provides
+methods to manage the user authentication.
 
 ### Usage
 
 #### Create an instance of ApiAuth
+
 ```js
 import { ApiAuth } from 'milkman-api-js-client'
 
@@ -274,13 +293,17 @@ const auth = new ApiAuth({
 ```
 
 #### First login
+
 This async method will contact the authentication service and store required tokens locally.
+
 ```js
 auth.login('john.smith@email.com', 'abcde123456')
 ```
 
 #### Renew authentication
+
 This async method uses the current stored tokens to renew the authentication. New tokens will be stored locally.
+
 ```js
 auth.refresh()
 ```
@@ -290,6 +313,7 @@ auth.refresh()
 To easily provide authorization token to any API request, use the optional `enhancers` parameter.
 
 `cognitoHeaderEnhancer` enhancer automatically set the Cognito 'bearer' token in the request header.
+
 ```js
 import { ApiClient, cognitoHeaderEnhancer } from 'milkman-api-js-client'
 
@@ -301,6 +325,7 @@ const apiClient = new ApiClient({
 #### Old Version
 
 To use the old authentication, add the `sessionHeaderEnhancer` too.
+
 ```js
 import {
   ApiClient,
@@ -314,9 +339,11 @@ const apiClient = new ApiClient({
 ```
 
 ### Automatic Refresh
+
 It's possible to let `ApiAuth` manage the authentication renewal automatically.
 
 #### Configuration
+
 ```js
 const auth = new ApiAuth({
   application: 'myApplication',
@@ -333,6 +360,7 @@ After the fist call to the `login`, the `refresh` method will be automatically c
 To use the old authentication, set the `useMilkmanSession` to `true`, and pass the `milkmanBaseUrl`.
 
 #### Configure ApiAuth
+
 ```js
 const auth = new ApiAuth({
   application: 'myApplication',

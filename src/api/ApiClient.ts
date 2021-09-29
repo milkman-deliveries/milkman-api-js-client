@@ -1,6 +1,6 @@
 import 'isomorphic-fetch'
-import {RequestEnhancer} from './RequestEnhancer'
-import {defaultHeaders} from '../utils/headers'
+import { defaultHeaders } from '../utils/headers'
+import { RequestEnhancer } from './RequestEnhancer'
 
 export interface ApiConfig {
   /** Base url for every API call. Default is "/". */
@@ -31,22 +31,22 @@ export class ApiClient {
       method,
       headers: {
         ...defaultHeaders,
-        ...headers
+        ...headers,
       },
-      ...otherOptions
+      ...otherOptions,
     }
     return this.enhancers.reduce<RequestInit>(
       (enhancedRequest, enhancer) => {
         return enhancer(enhancedRequest)
       },
-      request
+      request,
     )
   }
 
   fetch(method: string, url: string, options?: any): Promise<Response> {
     return fetch(
       this.composeUrl(url),
-      this.composeRequest(method, options)
+      this.composeRequest(method, options),
     )
   }
 
@@ -57,21 +57,21 @@ export class ApiClient {
   post(url: string, data: any, options?: any): Promise<Response> {
     return this.fetch('POST', url, {
       body: JSON.stringify(data),
-      ...options
+      ...options,
     })
   }
 
   put(url: string, data: any, options?: any): Promise<Response> {
     return this.fetch('PUT', url, {
       body: JSON.stringify(data),
-      ...options
+      ...options,
     })
   }
 
   patch(url: string, data: any, options?: any): Promise<Response> {
     return this.fetch('PATCH', url, {
       body: JSON.stringify(data),
-      ...options
+      ...options,
     })
   }
 

@@ -42,49 +42,49 @@ export class LegacyApiQuery {
    * Add a rule of type "equals".
    */
   eq(field: string, value: any): LegacyApiQuery {
-    return this.addRule( field, ApiQueryRuleType.EQ,value)
+    return this.addRule(field, ApiQueryRuleType.EQ, value)
   }
 
   /**
    * Add a rule of type "not equals".
    */
   ne(field: string, value: any): LegacyApiQuery {
-    return this.addRule( field, ApiQueryRuleType.NE, value)
+    return this.addRule(field, ApiQueryRuleType.NE, value)
   }
 
   /**
    * Add a rule of type "greater than".
    */
   gt(field: string, value: any): LegacyApiQuery {
-    return this.addRule( field, ApiQueryRuleType.GT, value)
+    return this.addRule(field, ApiQueryRuleType.GT, value)
   }
 
   /**
    * Add a rule of type "greater than or equal".
    */
   gte(field: string, value: any): LegacyApiQuery {
-    return this.addRule( field, ApiQueryRuleType.GTE, value)
+    return this.addRule(field, ApiQueryRuleType.GTE, value)
   }
 
   /**
    * Add a rule of type "less than".
    */
   lt(field: string, value: any): LegacyApiQuery {
-    return this.addRule( field, ApiQueryRuleType.LT, value)
+    return this.addRule(field, ApiQueryRuleType.LT, value)
   }
 
   /**
    * Add a rule of type "less than or equal".
    */
   lte(field: string, value: any): LegacyApiQuery {
-    return this.addRule( field, ApiQueryRuleType.LTE, value)
+    return this.addRule(field, ApiQueryRuleType.LTE, value)
   }
 
   /**
    * Add a rule of type "in".
    */
   in(field: string, value: any[]): LegacyApiQuery {
-    return this.addRule( field, ApiQueryRuleType.IN, value)
+    return this.addRule(field, ApiQueryRuleType.IN, value)
   }
 
   /**

@@ -1,5 +1,5 @@
 import { RequestEnhancer } from '../../api/RequestEnhancer'
-import { retrieveSessionToken } from '../session'
+import { retrieveSessionToken } from '../sessionStorage'
 
 export const legacyAuthEnhancer: RequestEnhancer = request => {
   if (!request.headers) request.headers = {}

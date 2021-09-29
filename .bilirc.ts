@@ -5,14 +5,14 @@ const config: Config = {
     typescript2: {
       // Override the config in `tsconfig.json`
       tsconfigOverride: {
-        include: ['src']
-      }
-    }
+        include: ['src'],
+      },
+    },
   },
   input: 'src/index.ts',
   output: {
-    format: ['cjs', 'esm']
-  }
+    format: ['cjs', 'esm'],
+  },
 }
 
 export default config

@@ -1,6 +1,5 @@
 import { mockFetch } from '../../jest/mocks/fetch.mock'
-import { retrieveRefreshToken, storeIdToken } from './session'
-import { ApiAuth, AuthenticationMethod, COGNITO_ENDPOINT } from './ApiAuth'
+import { ApiAuth, COGNITO_ENDPOINT } from './ApiAuth'
 
 const authBasicConfig = {
   application: 'test',
@@ -46,7 +45,7 @@ describe('ApiAuth', () => {
               AuthFlow: 'USER_PASSWORD_AUTH',
               AuthParameters: {
                 USERNAME: 'username',
-                PASSWORD: 'password',
+                PASSWORD: 'password'
               }
             })
           })
@@ -69,14 +68,13 @@ describe('ApiAuth', () => {
               ClientId: 'test123',
               AuthFlow: 'REFRESH_TOKEN_AUTH',
               AuthParameters: {
-                REFRESH_TOKEN: 'testRefreshToken',
+                REFRESH_TOKEN: 'testRefreshToken'
               }
             })
           })
         })
     })
   })
-
 
   describe('standard behavior', () => {
     const auth = new ApiAuth({

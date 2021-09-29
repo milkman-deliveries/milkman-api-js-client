@@ -2,19 +2,19 @@ import { ApiSort } from './ApiSort'
 
 describe('ApiSort', () => {
 
-  it ('accept "ascending" rule', () => {
+  it('accept "ascending" rule', () => {
     const sort = new ApiSort()
     sort.asc('test')
     expect(sort.toString()).toEqual('sort=test:asc')
   })
 
-  it ('accept "descending" rule', () => {
+  it('accept "descending" rule', () => {
     const sort = new ApiSort()
     sort.desc('test')
     expect(sort.toString()).toEqual('sort=test:desc')
   })
 
-  it ('accept multiple rules', () => {
+  it('accept multiple rules', () => {
     const sort = new ApiSort()
     sort.asc('aaa')
     sort.desc('bbb')

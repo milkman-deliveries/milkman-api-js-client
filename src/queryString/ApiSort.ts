@@ -18,7 +18,7 @@ export class ApiSort {
    * Add or update a rule to the sorting.
    */
   private addRule(name: string, direction: ApiSortDirection = ApiSortDirection.ASC): ApiSort {
-    this.rules.push({ name, direction })
+    this.rules.push({name, direction})
     return this
   }
 

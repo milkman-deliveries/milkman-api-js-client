@@ -4,7 +4,7 @@ describe('ApiQuery', () => {
 
   describe('generic rule type', () => {
 
-    it ('accept string values', () => {
+    it('accept string values', () => {
       const api1 = new LegacyApiQuery()
       api1.addRule('test', 'string')
       expect(api1.toString()).toEqual('{"test":"string"}')
@@ -14,7 +14,7 @@ describe('ApiQuery', () => {
       expect(api2.toString()).toEqual('{"test":"this is a more complex string"}')
     })
 
-    it ('accept numeric values', () => {
+    it('accept numeric values', () => {
       const api1 = new LegacyApiQuery()
       api1.addRule('test', 123)
       expect(api1.toString()).toEqual('{"test":123}')
@@ -24,7 +24,7 @@ describe('ApiQuery', () => {
       expect(api2.toString()).toEqual('{"test":123.456}')
     })
 
-    it ('accept boolean values', () => {
+    it('accept boolean values', () => {
       const api1 = new LegacyApiQuery()
       api1.addRule('test', true)
       expect(api1.toString()).toEqual('{"test":true}')
@@ -34,19 +34,19 @@ describe('ApiQuery', () => {
       expect(api2.toString()).toEqual('{"test":false}')
     })
 
-    it ('accept array values', () => {
+    it('accept array values', () => {
       const api = new LegacyApiQuery()
       api.addRule('test', ['string', 123, true, 123.45])
       expect(api.toString()).toEqual('{"test":["string",123,true,123.45]}')
     })
 
-    it ('accept object values', () => {
+    it('accept object values', () => {
       const api = new LegacyApiQuery()
-      api.addRule('test', { aaa: 'string', bbb: 123, ccc: true, ddd: 123.45})
+      api.addRule('test', { aaa: 'string', bbb: 123, ccc: true, ddd: 123.45 })
       expect(api.toString()).toEqual('{"test":{"aaa":"string","bbb":123,"ccc":true,"ddd":123.45}}')
     })
 
-    it ('accept empty value', () => {
+    it('accept empty value', () => {
       const api = new LegacyApiQuery()
       api.addRule('test')
       expect(api.toString()).toEqual('{"test":""}')
@@ -55,43 +55,43 @@ describe('ApiQuery', () => {
 
   describe('common rules', () => {
 
-    it ('can add an "equal" rule', () => {
+    it('can add an "equal" rule', () => {
       const api = new LegacyApiQuery()
       api.eq('value')
       expect(api.toString()).toEqual('{"$eq":"value"}')
     })
 
-    it ('can add a "not equal" rule', () => {
+    it('can add a "not equal" rule', () => {
       const api = new LegacyApiQuery()
       api.ne('value')
       expect(api.toString()).toEqual('{"$ne":"value"}')
     })
 
-    it ('can add a "greater than" rule', () => {
+    it('can add a "greater than" rule', () => {
       const api = new LegacyApiQuery()
       api.gt('value')
       expect(api.toString()).toEqual('{"$gt":"value"}')
     })
 
-    it ('can add a "greater than or equal" rule', () => {
+    it('can add a "greater than or equal" rule', () => {
       const api = new LegacyApiQuery()
       api.gte('value')
       expect(api.toString()).toEqual('{"$gte":"value"}')
     })
 
-    it ('can add a "less than" rule', () => {
+    it('can add a "less than" rule', () => {
       const api = new LegacyApiQuery()
       api.lt('value')
       expect(api.toString()).toEqual('{"$lt":"value"}')
     })
 
-    it ('can add a "less than or equal" rule', () => {
+    it('can add a "less than or equal" rule', () => {
       const api = new LegacyApiQuery()
       api.lte('value')
       expect(api.toString()).toEqual('{"$lte":"value"}')
     })
 
-    it ('can add a "inside" rule', () => {
+    it('can add a "inside" rule', () => {
       const api = new LegacyApiQuery()
       api.in(['v1', 'v2', 'v3'])
       expect(api.toString()).toEqual('{"$in":["v1","v2","v3"]}')

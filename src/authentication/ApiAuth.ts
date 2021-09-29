@@ -1,8 +1,8 @@
 import 'isomorphic-fetch'
 import { defaultHeaders } from '../utils/headers'
 import {
-  retrieveIdToken, retrieveRefreshToken, storeIdToken, storeRefreshToken, storeSessionToken
-} from './session'
+  retrieveIdToken, retrieveRefreshToken, storeIdToken, storeRefreshToken, storeSessionToken,
+} from './sessionStorage'
 
 export const COGNITO_ENDPOINT = 'https://auth.milkmantechnologies.com/'
 export const COGNITO_TOKEN_TIMEOUT = 55 * 60 * 1000 // 55 minutes
@@ -64,21 +64,21 @@ export class ApiAuth {
   _cognitoLogin(username: string, password: string): Promise<CognitoAuthResponse> {
     return fetch(this.cognitoAuthUrl, {
       method: 'POST',
-      headers: { Accept: 'application/json' },
+      headers: {Accept: 'application/json'},
       body: JSON.stringify({
         ClientId: this.clientId,
         AuthFlow: AuthenticationMethod.USER_PASSWORD,
         AuthParameters: {
           USERNAME: username,
-          PASSWORD: password
-        }
-      })
+          PASSWORD: password,
+        },
+      }),
     })
       .then(res => {
         if (res.ok) return res.json()
         throw new Error()
       })
-      .then(({ AuthenticationResult, error }) => {
+      .then(({AuthenticationResult, error}) => {
         if (!error && AuthenticationResult) return AuthenticationResult
         throw new Error()
       })
@@ -90,20 +90,20 @@ export class ApiAuth {
   _cognitoRefresh(): Promise<CognitoAuthResponse> {
     return fetch(this.cognitoAuthUrl, {
       method: 'POST',
-      headers: { Accept: 'application/json' },
+      headers: {Accept: 'application/json'},
       body: JSON.stringify({
         ClientId: this.clientId,
         AuthFlow: AuthenticationMethod.REFRESH_TOKEN,
         AuthParameters: {
-          REFRESH_TOKEN: retrieveRefreshToken()
-        }
-      })
+          REFRESH_TOKEN: retrieveRefreshToken(),
+        },
+      }),
     })
       .then(res => {
         if (res.ok) return res.json()
         throw new Error()
       })
-      .then(({ AuthenticationResult, error }) => {
+      .then(({AuthenticationResult, error}) => {
         if (!error && AuthenticationResult) return AuthenticationResult
         throw new Error()
       })
@@ -117,14 +117,14 @@ export class ApiAuth {
       method: 'GET',
       headers: {
         ...defaultHeaders,
-        authorization: `Bearer ${retrieveIdToken()}`
-      }
+        authorization: `Bearer ${retrieveIdToken()}`,
+      },
     })
       .then(res => {
         if (res.ok) return res.json()
         throw new Error()
       })
-      .then(({ session }) => {
+      .then(({session}) => {
         if (session) return session
         throw new Error()
       })
@@ -144,7 +144,7 @@ export class ApiAuth {
    * Depending on the configuration, it can schedules an automatic authentication refresh.
    */
   async login(username: string, password: string): Promise<boolean> {
-    const { IdToken, RefreshToken } = await this._cognitoLogin(username, password)
+    const {IdToken, RefreshToken} = await this._cognitoLogin(username, password)
       .catch(() => Promise.reject())
 
     storeIdToken(IdToken)
@@ -169,7 +169,7 @@ export class ApiAuth {
    * then store the new ID token in session storage.
    */
   async refresh(): Promise<boolean> {
-    const { IdToken } = await this._cognitoRefresh()
+    const {IdToken} = await this._cognitoRefresh()
       .catch(() => Promise.reject())
 
     storeIdToken(IdToken)
