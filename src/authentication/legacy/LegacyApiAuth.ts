@@ -21,7 +21,7 @@ export class LegacyApiAuth {
   /** Calls POST /milkman/login, retrieving Milkman session token. */
   _login(params: LegacyLoginParams): Promise<string> {
     const client = new ApiClient({baseUrl: this.baseUrl})
-    return client.post(`${this.baseUrl}/milkman/login`, {
+    return client.POST(`${this.baseUrl}/milkman/login`, {
       rememberMe: true,
       loginSource: 'Web',
       ...params,
