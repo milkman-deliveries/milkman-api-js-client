@@ -47,32 +47,32 @@ export class ApiClient {
     )
   }
 
-  get(url: string, options?: any): Promise<Response> {
+  GET(url: string, options?: any): Promise<Response> {
     return this.fetch('GET', url, options)
   }
 
-  post(url: string, data: any, options?: any): Promise<Response> {
+  POST(url: string, data: any, options?: any): Promise<Response> {
     return this.fetch('POST', url, {
       body: JSON.stringify(data),
       ...options,
     })
   }
 
-  put(url: string, data: any, options?: any): Promise<Response> {
+  PUT(url: string, data: any, options?: any): Promise<Response> {
     return this.fetch('PUT', url, {
       body: JSON.stringify(data),
       ...options,
     })
   }
 
-  patch(url: string, data: any, options?: any): Promise<Response> {
+  PATCH(url: string, data: any, options?: any): Promise<Response> {
     return this.fetch('PATCH', url, {
       body: JSON.stringify(data),
       ...options,
     })
   }
 
-  delete(url: string, options?: any): Promise<Response> {
+  DELETE(url: string, options?: any): Promise<Response> {
     return this.fetch('DELETE', url, options)
   }
 }

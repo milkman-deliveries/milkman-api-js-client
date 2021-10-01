@@ -33,7 +33,7 @@ Add dependency to the `package.json`
 ```js
 import { ApiClient } from 'milkman-api-js-client'
 
-const apiClient = new ApiClient({
+const api = new ApiClient({
   baseUrl: 'https://test.milkmantechnologies.com/'
 })
 ```
@@ -43,11 +43,11 @@ const apiClient = new ApiClient({
 The 99% of the requests can be done only calling one of the following methods.
 
 ```js
-apiClient.get('/v99/foo')
-apiClient.delete('/v99/foo')
-apiClient.post('/v99/foo', data)
-apiClient.path('/v99/foo', data)
-apiClient.put('/v99/foo', data)
+api.GET('/v99/foo')
+api.DELETE('/v99/foo')
+api.POST('/v99/foo', data)
+api.PATCH('/v99/foo', data)
+api.PUT('/v99/foo', data)
 ```
 
 - The `url` specified is prefixed with the `baseUrl`.
@@ -62,16 +62,16 @@ see [fetch options](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/U
 
 ```js
 const options = {
-  headers: { /* put HERE custom headers */ }
+  headers: { /* put HERE custom headers */ },
   cache: 'no-cache',
   ...
 }
 
-apiClient.get('/v99/foo', options)
-apiClient.delete('/v99/foo', options)
-apiClient.post('/v99/foo', data, options)
-apiClient.path('/v99/foo', data, options)
-apiClient.put('/v99/foo', data, options)
+api.GET('/v99/foo', options)
+api.DELETE('/v99/foo', options)
+api.POST('/v99/foo', data, options)
+api.PATCH('/v99/foo', data, options)
+api.PUT('/v99/foo', data, options)
 ```
 
 The specified options will be passed down to the "fetch" primitive with no difference, except for the "authentication"
@@ -79,49 +79,51 @@ header, that will always be injected.
 
 ## Filtering
 
-This library provides an utility, called `ApiFilter`, to easily compose filtered requests:
+This library provides an utility, called `ApiFilters`, to easily compose filtered requests:
 
 ```js
-const filter = new ApiFilter()
-filter.eq('id', 123456)
-filter.gt('date', '2021-12-31')
-filter.in('status', ['committed', 'unassigned', 'baselineReady'])
-
-apiClient.get(`/v99/foo?${filter}`)
+const filters = new ApiFilters()
+filters.eq('id', 123456)
+filters.gt('date', '2021-12-31')
+filters.in('status', ['committed', 'unassigned', 'baselineReady'])
 ```
 
-It will compose the filtering parameters as the following:
+It will compose the following object:
 
 ```
-id=123456
-date[gt]=2021-12-31
-status[in]=committed,unassigned,baselineReady
+{
+  'id': 12345,
+  'date(gt)': "2021-12-31",
+  'status(in)': ['COMMITTED', 'UNASSINGED', 'BASELINE_READY']
+}
 ```
 
-and the resulting URL will looks like this:
+Then you can pass the object directly in the _data_ parameter of the API call:
 
-`/v99/foo?id=123456&date[gt]=2021-12-31&status[in]=committed,unassigned,baselineReady`
+```js
+api.POST('/v99/foo/search', filters)
+```
 
-#### Ooperators
+#### Operators
 
 The set of possible operators
 
-| Operator | Meaning | Ex. usage | Ex. result |
-| --- | --- | --- | --- |
-| eq | "equals" | `filter.eq('name', 'Mario')` | `name=Mario` |
-| ne | "not equals" | `filter.ne('name', 'Mario')` | `name[ne]=Mario` |
-| gt | "greater than" | `filter.gt('date', '2021-12-31')` | `date[gt]=2021-12-31` |
-| ge | "greater than or equal" | `filter.ge('date', '2021-12-31')` | `date[ge]=2021-12-31` |
-| lt | "less than" | `filter.lt('date', '2021-12-31')` | `date[lt]=2021-12-31` |
-| le | "less than or equal" | `filter.le('date', '2021-12-31')` | `date[le]=2021-12-31` |
-| in | "one of the values" | `filter.in('name', ['v1', 'v2', 'v3'])` | `name[in]=v1,v2,v3` |
+| Operator | Meaning | Ex. usage |
+| --- | --- | --- |
+| eq | "equals" | `filter.eq('name', 'Mario')` |
+| ne | "not equals" | `filter.ne('name', 'Mario')` |
+| gt | "greater than" | `filter.gt('date', '2021-12-31')` |
+| ge | "greater than or equal" | `filter.ge('date', '2021-12-31')` |
+| lt | "less than" | `filter.lt('date', '2021-12-31')` |
+| le | "less than or equal" | `filter.le('date', '2021-12-31')` |
+| in | "one of the values" | `filter.in('name', ['v1', 'v2', 'v3'])`|
 
 #### Custom Operator
 
 If required, a custom operator can be specified calling the `addRule` method:
 
 ```js
-filter.addRule('param', 'customOp', 'value') // param[customOp]=value
+filter.addRule('field', 'customOp', 'value') // 'field(customOp)': 'value'
 ```
 
 ## Sorting
@@ -133,12 +135,12 @@ const sort = new ApiSort()
 sort.asc('name')
 sort.desc('date')
 
-apiClient.get(`/v99/foo?${sort}`)
+api.GET(`/v99/foo?${sort}`)
 ```
 
 The resulting URL will looks like this:
 
-`/v99/foo?sort=name:asc,date:desc`
+`/v99/foo?sort=name(asc),date(desc)`
 
 ## Lazy Loading
 
@@ -149,16 +151,16 @@ The resulting URL will looks like this:
 const lazyLoading = new ApiLazyLoading(50)
 
 // ask first 50 items
-apiClient.get(`/v99/foo?${lazyLoading}`)
+api.GET(`/v99/foo?${lazyLoading}`)
 
 // ask next 50 items
-apiClient.get(`/v99/foo?${lazyLoading}`)
+api.GET(`/v99/foo?${lazyLoading}`)
 
 // change limit to 30
 lazyLoading.setLimit(30)
 
 // ask next 30 items
-apiClient.get(`/v99/foo?${lazyLoading}`)
+api.GET(`/v99/foo?${lazyLoading}`)
 ```
 
 ## Pagination
@@ -170,16 +172,16 @@ apiClient.get(`/v99/foo?${lazyLoading}`)
 const pagination = new ApiPagination(50)
 
 // ask for page 1 (index 0; items from 0 to 49)
-apiClient.get(`/v99/foo?${pagination.page(0)}`)
+api.GET(`/v99/foo?${pagination.page(0)}`)
 
 // ask for page 4 (index 3; items from 150 to 199)
-apiClient.get(`/v99/foo?${pagination.page(3)}`)
+api.GET(`/v99/foo?${pagination.page(3)}`)
 
 // change page size to 100
 pagination.setPageSize(100)
 
 // ask for the new page 4 (index 3; items from 300 to 399)
-apiClient.get(`/v99/foo?${pagination.page(3)}`)
+api.GET(`/v99/foo?${pagination.page(3)}`)
 ```
 
 ## Compose Utilities
@@ -187,7 +189,7 @@ apiClient.get(`/v99/foo?${pagination.page(3)}`)
 We can easily use all the utility together:
 
 ```js
-const filter = new ApiFilter()
+const filters = new ApiFilters()
 filters.gt('date', '2021-12-31')
 
 const sort = new ApiSort()
@@ -196,7 +198,7 @@ sort.asc('name')
 const pagination = new ApiPagination(50)
 pagination.setPage(1)
 
-apiClient.get(`/v99/foo?${filter}&${sort}&${pagination}`)
+api.POST(`/v99/foo?${sort}&${pagination}`, filters)
 ```
 
 # Legacy
@@ -211,7 +213,7 @@ parameter called "query".
 #### Example
 
 ```js
-apiClient.get('/v99/foo?query={"id":{"$eq":123456}}')
+api.GET('/v99/foo?query={"id":{"$eq":123456}}')
 ```
 
 This library provides an utility, called `LegacyApiQuery`, to easily compose such a requests:
@@ -220,7 +222,7 @@ This library provides an utility, called `LegacyApiQuery`, to easily compose suc
 const query = new LegacyApiQuery()
 query.eq('id', 123456)
 
-apiClient.get(`/v99/foo?query=${query}`)
+api.GET(`/v99/foo?query=${query}`)
 ```
 
 #### Rules
@@ -274,7 +276,7 @@ Also "sorting" has its own opinionated syntax, similar to the "query" one.
 #### Example
 
 ```js
-apiClient.get('/v99/foo?sort={"name":1') // sort by name, ascending
+api.GET('/v99/foo?sort={"name":1}') // sort by name, ascending
 ```
 
 `LegacyApiSort` is another utility to compose the object for the `sort` query-string parameter.
@@ -283,7 +285,7 @@ apiClient.get('/v99/foo?sort={"name":1') // sort by name, ascending
 const sort = new LegacyApiSort()
 sort.asc('name')
 
-apiClient.get(`/v99/foo?sort=${sort}`)
+api.GET(`/v99/foo?sort=${sort}`)
 ```
 
 You can also "chain" rules:
@@ -337,7 +339,7 @@ To easily provide authorization token to any API request, use the optional `enha
 ```js
 import { ApiClient, cognitoHeaderEnhancer } from 'milkman-api-js-client'
 
-const apiClient = new ApiClient({
+const api = new ApiClient({
   enhancers: [cognitoHeaderEnhancer]
 })
 ```
@@ -353,7 +355,7 @@ import {
   sessionHeaderEnhancer
 } from 'milkman-api-js-client'
 
-const apiClient = new ApiClient({
+const api = new ApiClient({
   enhancers: [cognitoHeaderEnhancer, sessionHeaderEnhancer]
 })
 ```
@@ -401,7 +403,7 @@ import {
   sessionHeaderEnhancer
 } from 'milkman-api-js-client'
 
-const apiClient = new ApiClient({
+const api = new ApiClient({
   enhancers: [cognitoHeaderEnhancer, sessionHeaderEnhancer]
 })
 ```

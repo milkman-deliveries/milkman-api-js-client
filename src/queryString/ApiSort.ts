@@ -41,7 +41,7 @@ export class ApiSort {
    */
   toString(): string {
     const sort = this.rules
-      .map(rule => `${rule.name}:${rule.direction}`)
+      .map(rule => `${rule.name}(${rule.direction})`)
       .join(',')
     return `sort=${sort}`
   }

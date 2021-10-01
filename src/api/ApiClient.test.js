@@ -1,11 +1,6 @@
 import { defaultHeaders } from '../utils/headers'
 import { ApiClient } from './ApiClient'
 
-// jest.mock('../utils/session', () => ({
-//   __esModule: true,
-//   retrieveIdToken: jest.fn(() => 'TEST_ID_TOKEN')
-// }))
-
 describe('ApiSort', () => {
 
   describe('composeUrl', () => {
