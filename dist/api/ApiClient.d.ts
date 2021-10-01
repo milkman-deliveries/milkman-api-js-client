@@ -1,5 +1,5 @@
 import 'isomorphic-fetch';
-import { RequestEnhancer } from './RequestEnhancer';
+import { RequestEnhancer } from '../types/RequestEnhancer';
 export interface ApiConfig {
     /** Base url for every API call. Default is "/". */
     baseUrl?: string;

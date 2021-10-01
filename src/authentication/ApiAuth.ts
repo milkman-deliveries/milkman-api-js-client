@@ -1,5 +1,5 @@
 import 'isomorphic-fetch'
-import { defaultHeaders } from '../utils/headers'
+import { defaultHeaders } from '../utils/defaultHeaders'
 import {
   retrieveIdToken, retrieveRefreshToken, storeIdToken, storeRefreshToken, storeSessionToken,
 } from './sessionStorage'

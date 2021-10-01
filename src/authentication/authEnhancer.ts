@@ -1,4 +1,4 @@
-import { RequestEnhancer } from '../api/RequestEnhancer'
+import { RequestEnhancer } from '../types/RequestEnhancer'
 import { retrieveIdToken } from './sessionStorage'
 
 export const authEnhancer: RequestEnhancer = request => {
