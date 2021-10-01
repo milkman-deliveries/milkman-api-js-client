@@ -1,30 +1,28 @@
-export declare enum ApiSortValue {
-    ASC = 1,
-    DESC = 0
+export declare enum ApiSortDirection {
+    ASC = "asc",
+    DESC = "desc"
+}
+export interface ApiSortRule {
+    name: string;
+    direction: ApiSortDirection;
 }
 /**
- * An utility to compose a "sort" parameter.
+ * An utility to compose query-strings for sorting APIs.
  */
 export declare class ApiSort {
-    sort: {
-        [ruleType: string]: ApiSortValue;
-    };
+    rules: ApiSortRule[];
     /**
      * Add or update a rule to the sorting.
      */
     private addRule;
     /**
-     * Delete a rule from the sorting.
-     */
-    removeRule(ruleName: string): ApiSort;
-    /**
      * Add an "ascending" rule from the sorting.
      */
-    asc(ruleName: string): ApiSort;
+    asc(name: string): ApiSort;
     /**
      * Add a "descending" rule from the sorting.
      */
-    desc(ruleName: string): ApiSort;
+    desc(name: string): ApiSort;
     /**
      * Compose the value from the "query string" parameter.
      */

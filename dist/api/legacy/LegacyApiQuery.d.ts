@@ -3,53 +3,53 @@ export declare enum ApiQueryRuleType {
     NE = "$ne",
     GT = "$gt",
     GTE = "$gte",
-    LT = "$le",
+    LT = "$lt",
     LTE = "$lte",
     IN = "$in"
 }
 /**
  * An utility to compose a "query" parameter using Milkman "query language".
  */
-export declare class ApiQuery {
+export declare class LegacyApiQuery {
     query: {
         [ruleType: string]: any;
     };
     /**
      * Add or update a rule to the query.
      */
-    addRule(field: string, ruleType: string, value?: any): ApiQuery;
+    addRule(field: string, ruleType: string, value?: any): LegacyApiQuery;
     /**
      * Remove a rule from the query.
      */
-    removeRule(field: string, ruleType: string): ApiQuery;
+    removeRule(field: string, ruleType: string): LegacyApiQuery;
     /**
      * Add a rule of type "equals".
      */
-    eq(field: string, value: any): ApiQuery;
+    eq(field: string, value: any): LegacyApiQuery;
     /**
      * Add a rule of type "not equals".
      */
-    ne(field: string, value: any): ApiQuery;
+    ne(field: string, value: any): LegacyApiQuery;
     /**
      * Add a rule of type "greater than".
      */
-    gt(field: string, value: any): ApiQuery;
+    gt(field: string, value: any): LegacyApiQuery;
     /**
      * Add a rule of type "greater than or equal".
      */
-    gte(field: string, value: any): ApiQuery;
+    gte(field: string, value: any): LegacyApiQuery;
     /**
      * Add a rule of type "less than".
      */
-    lt(field: string, value: any): ApiQuery;
+    lt(field: string, value: any): LegacyApiQuery;
     /**
      * Add a rule of type "less than or equal".
      */
-    lte(field: string, value: any): ApiQuery;
+    lte(field: string, value: any): LegacyApiQuery;
     /**
      * Add a rule of type "in".
      */
-    in(field: string, value: any[]): ApiQuery;
+    in(field: string, value: any[]): LegacyApiQuery;
     /**
      * Compose the value from the "query string" parameter.
      */
