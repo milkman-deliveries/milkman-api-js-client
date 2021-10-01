@@ -1,6 +1,19 @@
 # milkman-api-js-client
 
-## Setup
+## Setup project
+
+### Yarn
+This project use `yarn` package manager:
+- If you don't have jet run `npm i -g yarn`
+- To download *node_modules* dependencies run `yarn install` in the project
+
+Refers to [Yarn](https://yarnpkg.com/cli) for further commands.
+
+### Typescript
+This project use Typescript. Each time you push some changes, you must remember to update the generated bundle in the `/dist` directory.
+To do so, run `yarn bundle`.
+
+## Import as dependency
 
 Add dependency to the `package.json`
 
