@@ -1,9 +1,10 @@
+import { defaultHeaders } from '../utils/headers'
 import { ApiClient } from './ApiClient'
 
-jest.mock('./utils/session', () => ({
-  __esModule: true,
-  retrieveIdToken: jest.fn(() => 'TEST_ID_TOKEN')
-}))
+// jest.mock('../utils/session', () => ({
+//   __esModule: true,
+//   retrieveIdToken: jest.fn(() => 'TEST_ID_TOKEN')
+// }))
 
 describe('ApiSort', () => {
 
@@ -22,72 +23,38 @@ describe('ApiSort', () => {
     })
   })
 
-  describe('composeHeaders', () => {
-
-    it('with no custom headers', () => {
+  describe('composeRequest', () => {
+    it('basic', () => {
       const api = new ApiClient()
-
-      expect(api.composeHeaders()).toEqual({
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        authorization: `Bearer TEST_ID_TOKEN`
+      expect(api.composeRequest('GET')).toEqual({
+        method: 'GET',
+        headers: defaultHeaders
       })
     })
 
     it('with custom headers', () => {
       const api = new ApiClient()
-      const customHeaders = {
+      const headers = {
         customHeader1: 'test test test',
         customHeader2: 'another test'
       }
-      expect(api.composeHeaders(customHeaders)).toEqual({
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        authorization: `Bearer TEST_ID_TOKEN`,
-        ...customHeaders
-      })
-    })
-  })
-
-  describe('composeOptions', () => {
-
-    it('with no custom options', () => {
-      const api = new ApiClient()
-      const headers = {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        authorization: `Bearer TEST_ID_TOKEN`
-      }
-
-      expect(api.composeRequest('GET')).toEqual({
+      expect(api.composeRequest('GET', { headers })).toEqual({
         method: 'GET',
-        headers
+        headers: { ...defaultHeaders, ...headers }
       })
     })
 
     it('with custom options', () => {
       const api = new ApiClient()
-      const headers = {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        authorization: `Bearer TEST_ID_TOKEN`
-      }
       const options = {
-        customOption: 'customOption value',
-        headers: {
-          customHeader: 'customHeader value'
-        }
+        integrity: 'test test test',
+        keepalive: false
       }
-
       expect(api.composeRequest('GET', options)).toEqual({
         method: 'GET',
-        headers: {
-          ...headers,
-          customHeader: 'customHeader value'
-        },
-        customOption: 'customOption value'
+        headers: defaultHeaders,
+        ...options
       })
     })
   })
-
 })

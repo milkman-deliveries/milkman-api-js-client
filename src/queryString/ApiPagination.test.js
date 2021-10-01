@@ -2,16 +2,15 @@ import { ApiPagination } from './ApiPagination'
 
 describe('ApiPagination', () => {
 
-  it('first page', () => {
+  it('initial page size', () => {
     const pagination = new ApiPagination(50)
-    expect(pagination.toString()).toEqual('skip=0&limit=50')
+    expect(pagination.page(0)).toEqual('skip=0&limit=50')
+    expect(pagination.page(3)).toEqual('skip=150&limit=50')
   })
 
-  it('next pages', () => {
+  it('change page size', () => {
     const pagination = new ApiPagination(50)
-    pagination.setPage(4)
-    expect(pagination.toString()).toEqual('skip=150&limit=50')
-    pagination.setPage(5)
-    expect(pagination.toString()).toEqual('skip=200&limit=50')
+    pagination.setPageSize(100)
+    expect(pagination.page(3)).toEqual('skip=300&limit=100')
   })
 })

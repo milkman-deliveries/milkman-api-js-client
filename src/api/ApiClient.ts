@@ -1,4 +1,5 @@
 import 'isomorphic-fetch'
+import merge from 'lodash/merge'
 import { defaultHeaders } from '../utils/headers'
 import { RequestEnhancer } from './RequestEnhancer'
 
@@ -26,15 +27,11 @@ export class ApiClient {
   }
 
   composeRequest(method, customOptions: RequestInit = {}): RequestInit {
-    const {headers, ...otherOptions} = customOptions
-    const request = {
+    const basicOptions = {
       method,
-      headers: {
-        ...defaultHeaders,
-        ...headers,
-      },
-      ...otherOptions,
+      headers: defaultHeaders,
     }
+    const request = merge(basicOptions, customOptions)
     return this.enhancers.reduce<RequestInit>(
       (enhancedRequest, enhancer) => {
         return enhancer(enhancedRequest)

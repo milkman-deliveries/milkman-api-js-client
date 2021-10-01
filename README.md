@@ -132,17 +132,19 @@ The resulting URL will looks like this:
 `ApiLazyLoading` is an utility to easily create lazy-loading requests:
 
 ```js
-const lazyLoading = new ApiLazyLoading()
+// set initial limit to 50
+const lazyLoading = new ApiLazyLoading(50)
 
 // ask first 50 items
-lazyLoading.setLimit(50)
 apiClient.get(`/v99/foo?${lazyLoading}`)
 
 // ask next 50 items
 apiClient.get(`/v99/foo?${lazyLoading}`)
 
-// ask next 30 items
+// change limit to 30
 lazyLoading.setLimit(30)
+
+// ask next 30 items
 apiClient.get(`/v99/foo?${lazyLoading}`)
 ```
 
@@ -151,15 +153,20 @@ apiClient.get(`/v99/foo?${lazyLoading}`)
 `ApiPagination` is an utility to easily create paginated requests:
 
 ```js
+// set initial page size to 50
 const pagination = new ApiPagination(50)
 
-// ask items from 0 to 49 (page 1)
-pagination.setPage(1)
-apiClient.get(`/v99/foo?${pagination}`)
+// ask for page 1 (index 0; items from 0 to 49)
+apiClient.get(`/v99/foo?${pagination.page(0)}`)
 
-// ask items from 150 to 199 (page 4)
-pagination.setPage(4)
-apiClient.get(`/v99/foo?${pagination}`)
+// ask for page 4 (index 3; items from 150 to 199)
+apiClient.get(`/v99/foo?${pagination.page(3)}`)
+
+// change page size to 100
+pagination.setPageSize(100)
+
+// ask for the new page 4 (index 3; items from 300 to 399)
+apiClient.get(`/v99/foo?${pagination.page(3)}`)
 ```
 
 ## Compose Utilities
