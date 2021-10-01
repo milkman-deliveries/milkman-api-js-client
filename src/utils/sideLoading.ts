@@ -1,4 +1,14 @@
-export const allIds = (entities: object[], propertyName: string) => {
+import { Entity, ID_PROPERTY } from '../types/Entity'
+import { ID } from '../types/ID'
+
+type MappedEntities<T> = { [key: ID]: Entity<T> }
+
+/**
+ * Extract the list all the ids from a list of entities
+ * @param entities The list of entities
+ * @param [propertyName] The name of the id property.
+ */
+export const allIds = <T>(entities: T[], propertyName: string = 'id'): ID[] => {
   const ids = []
   entities.forEach(entity => {
     const entityIds = entity[propertyName]
@@ -8,18 +18,29 @@ export const allIds = (entities: object[], propertyName: string) => {
       ids.push(entityIds)
     }
   })
+  return ids
 }
 
-export const byId = entities => entities.reduce((map, entity) => {
-  map[entity.id] = entity
-}, {})
-
-export const selectId = (mappedEntities, id: (string | number)) => (
-  mappedEntities[id]
+/**
+ * Map a list of entities by a specified identifier.
+ * @param entities The list of entities
+ * @param [propertyName] The name of the id property.
+ */
+export const byId = <T>(
+  entities: Entity<T>[],
+  propertyName: string = ID_PROPERTY
+): MappedEntities<T> => (
+  entities.reduce<MappedEntities<T>>((map, entity) => {
+    map[entity[propertyName]] = entity
+    return map
+  }, {})
 )
 
-export const selectIds = (mappedEntities, ids: (string | number)[]) => (
-  ids.map(id => (
-    selectId(mappedEntities, id)
-  ))
+/**
+ * Map a list of entities by a specified identifier.
+ * @param mappedEntities The map of entities
+ * @param ids The list of the identifiers.
+ */
+export const selectIds = <T>(mappedEntities: MappedEntities<T>, ids: ID[]): Entity<T>[] => (
+  ids.map(id => mappedEntities[id])
 )

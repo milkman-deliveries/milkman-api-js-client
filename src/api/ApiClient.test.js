@@ -1,4 +1,4 @@
-import { defaultHeaders } from '../utils/headers'
+import { defaultHeaders } from '../utils/defaultHeaders'
 import { ApiClient } from './ApiClient'
 
 describe('ApiSort', () => {

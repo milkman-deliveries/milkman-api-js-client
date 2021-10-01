@@ -1,2 +1,2 @@
-import { RequestEnhancer } from '../api/RequestEnhancer';
+import { RequestEnhancer } from '../types/RequestEnhancer';
 export declare const authEnhancer: RequestEnhancer;

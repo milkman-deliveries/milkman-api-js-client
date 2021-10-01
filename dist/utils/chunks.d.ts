@@ -1,6 +1,6 @@
 /**
- * Split ids in chunks of a specified size.
- * @param ids The list of id to split in chunk.
+ * Split list of elements into chunks of a specified size.
+ * @param elements The list of elements to split.
  * @param chunkSize The maximum size of a chunk.
  */
-export declare const chunks: (ids: (string | number)[], chunkSize: number) => (string | number)[][];
+export declare const chunks: <T>(elements: T[], chunkSize: number) => T[][];

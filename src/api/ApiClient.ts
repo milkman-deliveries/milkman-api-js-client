@@ -1,7 +1,7 @@
 import 'isomorphic-fetch'
 import merge from 'lodash/merge'
-import { defaultHeaders } from '../utils/headers'
-import { RequestEnhancer } from './RequestEnhancer'
+import { defaultHeaders } from '../utils/defaultHeaders'
+import { RequestEnhancer } from '../types/RequestEnhancer'
 
 export interface ApiConfig {
   /** Base url for every API call. Default is "/". */
