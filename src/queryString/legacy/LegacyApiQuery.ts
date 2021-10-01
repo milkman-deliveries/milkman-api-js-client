@@ -91,6 +91,6 @@ export class LegacyApiQuery {
    * Compose the value from the "query string" parameter.
    */
   toString(): string {
-    return JSON.stringify(this.query)
+    return `query=${JSON.stringify(this.query)}`
   }
 }

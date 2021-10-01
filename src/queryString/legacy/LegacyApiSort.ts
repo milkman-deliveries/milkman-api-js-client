@@ -43,6 +43,6 @@ export class LegacyApiSort {
    * Compose the value from the "query string" parameter.
    */
   toString(): string {
-    return JSON.stringify(this.sort)
+    return `sort=${JSON.stringify(this.sort)}`
   }
 }

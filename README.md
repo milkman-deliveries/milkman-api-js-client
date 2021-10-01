@@ -88,6 +88,15 @@ filters.gt('date', '2021-12-31')
 filters.in('status', ['committed', 'unassigned', 'baselineReady'])
 ```
 
+You can also "chain" conditions:
+
+```js
+const filters = new ApiFilters()
+  .eq('id', 123456)
+  .gt('date', '2021-12-31')
+  .in('status', ['committed', 'unassigned', 'baselineReady'])
+```
+
 It will compose the following object:
 
 ```
@@ -136,6 +145,14 @@ sort.asc('name')
 sort.desc('date')
 
 api.GET(`/v99/foo?${sort}`)
+```
+
+You can also "chain" rules:
+
+```js
+const sort = new ApiSort()
+  asc('name')
+  desc('date')
 ```
 
 The resulting URL will looks like this:
@@ -219,44 +236,41 @@ api.GET('/v99/foo?query={"id":{"$eq":123456}}')
 This library provides an utility, called `LegacyApiQuery`, to easily compose such a requests:
 
 ```js
-const query = new LegacyApiQuery()
-query.eq('id', 123456)
+const legacyQuery = new LegacyApiQuery()
+legacyQuery.eq('id', 123456)
 
-api.GET(`/v99/foo?query=${query}`)
+api.GET(`/v99/foo?${legacyQuery}`)
 ```
 
 #### Rules
 
 ```js
 // equals
-query.eq('id', 123456)
-query.eq('name', 'John')
+legacyQuery.eq('name', 'John')
 
 // not equals
-query.ne('id', 123456)
-query.ne('name', 'John')
+legacyQuery.ne('id', 123456)
 
 // greater than
-query.gt('age', 18)
+legacyQuery.gt('age', 18)
 
 // greater than or equal
-query.gte('age', 18)
+legacyQuery.gte('age', 18)
 
 // less than
-query.lt('age', 18)
+legacyQuery.lt('age', 18)
 
 // less than or equal
-query.lte('age', 18)
+legacyQuery.lte('age', 18)
 
 // one of specified values
-query.in('name', ['John', 'jack'])
-query.in('age', [18, 21, 30])
+legacyQuery.in('name', ['John', 20, true])
 ```
 
 You can also "chain" conditions:
 
 ```js
-const query = new LegacyApiQuery()
+const legacyQuery = new LegacyApiQuery()
   .gt('size', 10)
   .lt('size', 99)
   .in('status', ['Committed', 'InTransit'])
@@ -265,7 +279,7 @@ const query = new LegacyApiQuery()
 Or add custom type of rules:
 
 ```js
-const query = new LegacyApiQuery()
+const legacyQuery = new LegacyApiQuery()
   .addRule('size', '$custom', 'test')
 ```
 
@@ -282,16 +296,16 @@ api.GET('/v99/foo?sort={"name":1}') // sort by name, ascending
 `LegacyApiSort` is another utility to compose the object for the `sort` query-string parameter.
 
 ```js
-const sort = new LegacyApiSort()
-sort.asc('name')
+const legacySort = new LegacyApiSort()
+legacySort.asc('name')
 
-api.GET(`/v99/foo?sort=${sort}`)
+api.GET(`/v99/foo?${legacySort}`)
 ```
 
 You can also "chain" rules:
 
 ```js
-const sort = new LegacyApiSort()
+const legacySort = new LegacyApiSort()
   .asc('name')
   .desc('age')
 ```
