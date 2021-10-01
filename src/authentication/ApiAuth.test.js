@@ -13,7 +13,7 @@ const cognitoLoginSuccessResponse = {
   }
 }
 
-jest.mock('../utils/session', () => ({
+jest.mock('./sessionStorage', () => ({
   storeIdToken: () => undefined,
   storeRefreshToken: () => undefined,
   retrieveRefreshToken: () => 'testRefreshToken'
@@ -29,8 +29,8 @@ describe('ApiAuth', () => {
 
   describe('cognitoLogin()', () => {
     it('compose correct request', () => {
+      const fetch = mockFetch((...args) => ({ AuthenticationResult: args }))
       const auth = new ApiAuth(authBasicConfig)
-      const fetch = mockFetch()
       auth
         ._cognitoLogin('username', 'password')
         .then(([url, options]) => {
@@ -55,12 +55,13 @@ describe('ApiAuth', () => {
 
   describe('cognitoRefresh()', () => {
     it('compose correct request', () => {
+      const fetch = mockFetch((...args) => ({ AuthenticationResult: args }))
       const auth = new ApiAuth(authBasicConfig)
-      const fetch = mockFetch()
       auth
-        ._cognitoRefresh('username', 'password')
+        ._cognitoRefresh()
         .then(([url, options]) => {
           expect(fetch).toHaveBeenCalled()
+          expect(url).toEqual(`${COGNITO_ENDPOINT}test/login`)
           expect(options).toEqual({
             method: 'POST',
             headers: { Accept: 'application/json' },
@@ -72,26 +73,6 @@ describe('ApiAuth', () => {
               }
             })
           })
-        })
-    })
-  })
-
-  describe('standard behavior', () => {
-    const auth = new ApiAuth({
-      application: 'test',
-      clientId: 'test123'
-    })
-
-    it('login()', () => {
-      const fetch = mockFetch(() => cognitoLoginSuccessResponse)
-      auth
-        .login('username', 'password')
-        .then(response => {
-          expect(fetch).toHaveBeenCalled()
-          expect(response).toEqual(true)
-        })
-        .catch(e => {
-          console.log(e)
         })
     })
   })

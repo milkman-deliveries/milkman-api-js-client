@@ -23,7 +23,7 @@ export interface ApiAuthConfig {
   automaticRefresh?: boolean
   refreshTimeoutMs?: number
   // legacy authentication
-  useMilkmanSession: boolean
+  useMilkmanSession?: boolean
   milkmanBaseUrl?: string
 }
 

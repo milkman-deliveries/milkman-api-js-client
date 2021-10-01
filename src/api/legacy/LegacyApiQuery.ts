@@ -3,7 +3,7 @@ export enum ApiQueryRuleType {
   NE = '$ne',
   GT = '$gt',
   GTE = '$gte',
-  LT = '$le',
+  LT = '$lt',
   LTE = '$lte',
   IN = '$in',
 }
