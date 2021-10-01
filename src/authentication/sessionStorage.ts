@@ -18,3 +18,15 @@ export const retrieveRefreshToken = (): string => (
 export const storeRefreshToken = (token: string): void => (
   sessionStorage.setItem(COGNITO_REFRESH_TOKEN_KEY, token)
 )
+
+// The following are methods used to store/retrieve the legacy session token.
+
+export const SESSION_TOKEN_KEY = 'MILMAN_SESSION_TOKEN_KEY'
+
+export const retrieveSessionToken = (): string => (
+  sessionStorage.getItem(SESSION_TOKEN_KEY)
+)
+
+export const storeSessionToken = (token: string): void => (
+  sessionStorage.setItem(SESSION_TOKEN_KEY, token)
+)

@@ -6,13 +6,13 @@ export enum ApiSortValue {
 /**
  * An utility to compose a "sort" parameter.
  */
-export class ApiSort {
+export class LegacyApiSort {
   sort: { [ruleType: string]: ApiSortValue } = {}
 
   /**
    * Add or update a rule to the sorting.
    */
-  private addRule(ruleName: string, ruleValue: ApiSortValue = ApiSortValue.ASC): ApiSort {
+  private addRule(ruleName: string, ruleValue: ApiSortValue = ApiSortValue.ASC): LegacyApiSort {
     this.sort[ruleName] = ruleValue
     return this
   }
@@ -20,7 +20,7 @@ export class ApiSort {
   /**
    * Delete a rule from the sorting.
    */
-  removeRule(ruleName: string): ApiSort {
+  removeRule(ruleName: string): LegacyApiSort {
     delete this.sort[ruleName]
     return this
   }
@@ -28,14 +28,14 @@ export class ApiSort {
   /**
    * Add an "ascending" rule from the sorting.
    */
-  asc(ruleName: string): ApiSort {
+  asc(ruleName: string): LegacyApiSort {
     return this.addRule(ruleName, ApiSortValue.ASC)
   }
 
   /**
    * Add a "descending" rule from the sorting.
    */
-  desc(ruleName: string): ApiSort {
+  desc(ruleName: string): LegacyApiSort {
     return this.addRule(ruleName, ApiSortValue.DESC)
   }
 
@@ -43,6 +43,6 @@ export class ApiSort {
    * Compose the value from the "query string" parameter.
    */
   toString(): string {
-    return JSON.stringify(this.sort)
+    return `sort=${JSON.stringify(this.sort)}`
   }
 }

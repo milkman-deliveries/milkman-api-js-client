@@ -6,31 +6,41 @@ export declare enum AuthenticationMethod {
     USER_PASSWORD = "USER_PASSWORD_AUTH",
     REFRESH_TOKEN = "REFRESH_TOKEN_AUTH"
 }
+export interface CognitoAuthResponse {
+    IdToken: string;
+    RefreshToken: string;
+}
 export interface ApiAuthConfig {
     application: string;
     clientId: string;
     automaticRefresh?: boolean;
     refreshTimeoutMs?: number;
+    useMilkmanSession?: boolean;
+    milkmanBaseUrl?: string;
 }
 export declare class ApiAuth {
     application: string;
     clientId: string;
     automaticRefresh: boolean;
     refreshTimeoutMs: number;
+    useMilkmanSession: boolean;
+    milkmanBaseUrl?: string;
     sessionTimeout: NodeJS.Timeout;
     constructor(config: ApiAuthConfig);
-    /**
-     * Compose the url for Cognito authentication.
-     */
-    get authUrl(): string;
+    get cognitoAuthUrl(): string;
+    get milkmanResolveUserUrl(): string;
     /**
      * Calls Cognito, asking for ID token and refresh Token.
      */
-    cognitoLogin(username: string, password: string): Promise<Response>;
+    _cognitoLogin(username: string, password: string): Promise<CognitoAuthResponse>;
     /**
      * Calls Cognito, asking for a new ID token.
      */
-    cognitoRefresh(): Promise<Response>;
+    _cognitoRefresh(): Promise<CognitoAuthResponse>;
+    /**
+     * Calls POST /milkman/resolveUser, retrieving Milkman session token.
+     */
+    _resolveUser(): Promise<string>;
     scheduleAutomaticRefresh(): void;
     /**
      * Authenticate via Cognito and store ID and Refresh tokens in session storage.

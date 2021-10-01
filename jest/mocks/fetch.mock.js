@@ -4,6 +4,9 @@ export const mockFetch = (implementation = identityFn) => (
   jest
     .spyOn(global, 'fetch')
     .mockImplementation((...args) => (
-      Promise.resolve(implementation(...args))
+      Promise.resolve({
+        ok: true,
+        json: () => implementation(...args)
+      })
     ))
 )
