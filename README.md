@@ -348,29 +348,13 @@ auth.refresh()
 
 To easily provide authorization token to any API request, use the optional `enhancers` parameter.
 
-`cognitoHeaderEnhancer` enhancer automatically set the Cognito 'bearer' token in the request header.
+`authEnhancer` automatically set the Cognito 'bearer' token in the request header.
 
 ```js
-import { ApiClient, cognitoHeaderEnhancer } from 'milkman-api-js-client'
+import { ApiClient, authEnhancer } from 'milkman-api-js-client'
 
 const api = new ApiClient({
-  enhancers: [cognitoHeaderEnhancer]
-})
-```
-
-#### Old Version
-
-To use the old authentication, add the `sessionHeaderEnhancer` too.
-
-```js
-import {
-  ApiClient,
-  cognitoHeaderEnhancer,
-  sessionHeaderEnhancer
-} from 'milkman-api-js-client'
-
-const api = new ApiClient({
-  enhancers: [cognitoHeaderEnhancer, sessionHeaderEnhancer]
+  enhancers: [authEnhancer]
 })
 ```
 
@@ -398,26 +382,23 @@ To use the old authentication, set the `useMilkmanSession` to `true`, and pass t
 #### Configure ApiAuth
 
 ```js
-const auth = new ApiAuth({
-  application: 'myApplication',
-  clientId: '1234560',
-  useMilkmanSession: true,
-  milkmanBaseUrl: 'https://test.milkmantechnologies.com/'
+const auth = new LegacyApiAuth({
+  baseUrl: 'https://test.milkmantechnologies.com/'
 })
+```
+
+#### Login
+
+```js
+auth.login({ username: 'test@mail.it', password: '******' })
 ```
 
 #### Enhance ApiClient
 
-To use the old authentication, add the `sessionHeaderEnhancer` too.
+To use the old authentication, add the `legacyAuthEnhancer` to the enhancers.
 
 ```js
-import {
-  ApiClient,
-  cognitoHeaderEnhancer,
-  sessionHeaderEnhancer
-} from 'milkman-api-js-client'
-
 const api = new ApiClient({
-  enhancers: [cognitoHeaderEnhancer, sessionHeaderEnhancer]
+  enhancers: [legacyAuthEnhancer]
 })
 ```
