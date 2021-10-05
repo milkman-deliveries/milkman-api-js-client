@@ -1,78 +1,92 @@
 import 'isomorphic-fetch'
 import merge from 'lodash/merge'
-import { defaultHeaders } from '../utils/defaultHeaders'
+import { ApiFetchInfo } from '../types/ApiFetchInfo'
 import { RequestEnhancer } from '../types/RequestEnhancer'
+import { ResponseHandler } from '../types/ResponseHandler'
+import { defaultHeaders } from '../utils/defaultHeaders'
 
 export interface ApiConfig {
   /** Base url for every API call. Default is "/". */
   baseUrl?: string,
-  /** List of enhancers for API requests. */
-  enhancers?: RequestEnhancer[]
+  /** List of request enhancers. */
+  requestEnhancers?: RequestEnhancer[]
+  /** List of response handlers. */
+  responseHandlers?: ResponseHandler[]
 }
 
 export class ApiClient {
   baseUrl: string
-  enhancers: RequestEnhancer[]
+  requestEnhancers?: RequestEnhancer[]
+  responseHandlers?: ResponseHandler[]
 
   constructor(config: ApiConfig = {}) {
     this.baseUrl = config.baseUrl || '/'
-    this.enhancers = config.enhancers || []
+    this.requestEnhancers = config.requestEnhancers || []
+    this.responseHandlers = config.responseHandlers || []
   }
 
-  composeUrl(url: string): string {
-    let composedUrl = this.baseUrl.replace(/\/*$/, '')
-    const parsedUrl = url.replace(/^\/*/, '')
-    composedUrl += `/${parsedUrl}`
-    return composedUrl
+  composeUrl(path: string): string {
+    const parsedBaseUrl = this.baseUrl.replace(/\/*$/, '')
+    const parsedPath = path.replace(/^\/*/, '')
+    return `${parsedBaseUrl}/${parsedPath}`
   }
 
-  composeRequest(method, customOptions: RequestInit = {}): RequestInit {
-    const basicOptions = {
-      method,
-      headers: defaultHeaders,
+  async applyRequestEnhancers<T>(request: RequestInit, info: ApiFetchInfo<T>): Promise<RequestInit> {
+    let enhancedRequest = request
+    for (let i = 0; i < this.requestEnhancers.length; i++) {
+      enhancedRequest = await this.requestEnhancers[i](request, info, this)
     }
-    const request = merge(basicOptions, customOptions)
-    return this.enhancers.reduce<RequestInit>(
-      (enhancedRequest, enhancer) => {
-        return enhancer(enhancedRequest)
-      },
-      request,
-    )
+    return enhancedRequest
   }
 
-  fetch(method: string, url: string, options?: any): Promise<Response> {
-    return fetch(
-      this.composeUrl(url),
-      this.composeRequest(method, options),
-    )
+  async applyResponseHandlers<T>(request: RequestInit, response: Response, info: ApiFetchInfo<T>): Promise<Response> {
+    let managedResponse = response
+    for (let i = 0; i < this.responseHandlers.length; i++) {
+      managedResponse = await this.responseHandlers[i](request, response, info, this)
+    }
+    return managedResponse
   }
 
-  GET(url: string, options?: any): Promise<Response> {
-    return this.fetch('GET', url, options)
+  async composeRequest<T>(info: ApiFetchInfo<T>): Promise<RequestInit> {
+    const basicRequest = {
+      method: info.method,
+      headers: defaultHeaders,
+      body: JSON.stringify(info.data)
+    }
+    const request = merge(basicRequest, info.options)
+    return this.applyRequestEnhancers(request, info)
   }
 
-  POST(url: string, data: any, options?: any): Promise<Response> {
-    return this.fetch('POST', url, {
-      body: JSON.stringify(data),
-      ...options,
-    })
+  async fetch<T>(info: ApiFetchInfo<T>): Promise<Response> {
+    const url = this.composeUrl(info.path)
+    const request = await this.composeRequest(info)
+    return fetch(url, request).then(response => (
+      this.applyResponseHandlers(request, response, info)
+    ))
   }
 
-  PUT(url: string, data: any, options?: any): Promise<Response> {
-    return this.fetch('PUT', url, {
-      body: JSON.stringify(data),
-      ...options,
-    })
+  GET<T>(path: string, options?: any): Promise<Response> {
+    const info: ApiFetchInfo<T> = { path, method: 'GET', options }
+    return this.fetch(info)
   }
 
-  PATCH(url: string, data: any, options?: any): Promise<Response> {
-    return this.fetch('PATCH', url, {
-      body: JSON.stringify(data),
-      ...options,
-    })
+  POST<T>(path: string, data: any, options?: any): Promise<Response> {
+    const info: ApiFetchInfo<T> = { path, method: 'POST', data, options }
+    return this.fetch(info)
   }
 
-  DELETE(url: string, options?: any): Promise<Response> {
-    return this.fetch('DELETE', url, options)
+  PUT<T>(path: string, data: T, options?: any): Promise<Response> {
+    const info: ApiFetchInfo<T> = { path, method: 'PUT', data, options }
+    return this.fetch(info)
+  }
+
+  PATCH<T>(path: string, data: any, options?: any): Promise<Response> {
+    const info: ApiFetchInfo<T> = { path, method: 'PATCH', data, options }
+    return this.fetch(info)
+  }
+
+  DELETE<T>(path: string, options?: any): Promise<Response> {
+    const info: ApiFetchInfo<T> = { path, method: 'DELETE', options }
+    return this.fetch(info)
   }
 }

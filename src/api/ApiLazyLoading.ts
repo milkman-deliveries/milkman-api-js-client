@@ -3,21 +3,14 @@
  */
 export class ApiLazyLoading {
   skip: number = 0
-  limit: number
 
-  constructor(limit: number = 0) {
-    this.limit = limit
+  reset() {
+    this.skip = 0
   }
 
-  setLimit(limit: number) {
-    this.limit = limit
-  }
-
-  skipMore(count: number) {
-    this.skip += count
-  }
-
-  toString(): string {
-    return `skip=${this.skip}&limit=${this.limit}`
+  load(limit: number) {
+    const qs = `skip=${this.skip}&limit=${limit}`
+    this.skip += limit
+    return qs
   }
 }

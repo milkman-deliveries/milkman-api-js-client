@@ -24,9 +24,7 @@ Add dependency to the `package.json`
 ## API call
 
 `ApiClient` class provides helpful methods to easily do API calls to milkman services.
-
-- Uses a polyfill fetch library for cross-browser compatibility.
-- Automatically retrieves last authentication token and inject it in any request header.
+It uses a polyfill fetch library for cross-browser compatibility.
 
 ### Create an instance of ApiClient
 
@@ -74,8 +72,34 @@ api.PATCH('/v99/foo', data, options)
 api.PUT('/v99/foo', data, options)
 ```
 
-The specified options will be passed down to the "fetch" primitive with no difference, except for the "authentication"
-header, that will always be injected.
+The specified options will be passed down to the "fetch" primitive with no changes.
+
+### Middlewares
+
+The `ApiClient` can also be _enhanced_ with custom behaviors:
+- Use `requestEnhancers` parameter to specify one or more functions for customizing request composition.
+- Use `responseHandlers` parameter to specify one or more function for customizing response handling.
+
+```js
+// enhance request adding custom header
+const myEnhancer = (request, info, _client) => {
+  request.headers['custom'] = 'test'
+  return request
+}
+
+// handle request and, in case of error, retry the API call
+const myHandler = async (request, response, info, _client) => {
+  if (!response.ok) {
+    return await _client.fetch(info)
+  }
+  return response
+}
+
+const api = new ApiClient({
+  requestEnhancers: [myEnhancer],
+  responseHanlders: [myHandler]
+})
+``` 
 
 ## Filtering
 
@@ -151,8 +175,8 @@ You can also "chain" rules:
 
 ```js
 const sort = new ApiSort()
-  asc('name')
-  desc('date')
+  .asc('name')
+  .desc('date')
 ```
 
 The resulting URL will looks like this:
@@ -164,20 +188,17 @@ The resulting URL will looks like this:
 `ApiLazyLoading` is an utility to easily create lazy-loading requests:
 
 ```js
-// set initial limit to 50
-const lazyLoading = new ApiLazyLoading(50)
+const lazy = new ApiLazyLoading()
 
 // ask first 50 items
-api.GET(`/v99/foo?${lazyLoading}`)
+api.GET(`/v99/foo?${lazy.load(50)}`)
 
-// ask next 50 items
-api.GET(`/v99/foo?${lazyLoading}`)
+// ask 20 more items
+api.GET(`/v99/foo?${lazy.load(20)}`)
 
-// change limit to 30
-lazyLoading.setLimit(30)
-
-// ask next 30 items
-api.GET(`/v99/foo?${lazyLoading}`)
+// reset and ask first 20 items
+lazy.reset()
+api.GET(`/v99/foo?${lazy.load(20)}`)
 ```
 
 ## Pagination
@@ -310,7 +331,7 @@ const legacySort = new LegacyApiSort()
   .desc('age')
 ```
 
-## Authentication
+# Authentication
 
 To call Milkman services you first need to obtain an authentication token. To do so, the `ApiAuth` class provides
 methods to manage the user authentication.
@@ -354,7 +375,7 @@ To easily provide authorization token to any API request, use the optional `enha
 import { ApiClient, authEnhancer } from 'milkman-api-js-client'
 
 const api = new ApiClient({
-  enhancers: [authEnhancer]
+  requestEnhancers: [authEnhancer]
 })
 ```
 
@@ -399,6 +420,6 @@ To use the old authentication, add the `legacyAuthEnhancer` to the enhancers.
 
 ```js
 const api = new ApiClient({
-  enhancers: [legacyAuthEnhancer]
+  requestEnhancers: [legacyAuthEnhancer]
 })
 ```
