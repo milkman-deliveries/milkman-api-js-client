@@ -8,7 +8,7 @@ type MappedEntities<T> = { [key: ID]: Entity<T> }
  * @param entities The list of entities
  * @param [propertyName] The name of the id property.
  */
-export const allIds = <T>(entities: T[], propertyName: string = 'id'): ID[] => {
+export const getAllIds = <T>(entities: T[], propertyName: string = 'id'): ID[] => {
   const ids = []
   entities.forEach(entity => {
     const entityIds = entity[propertyName]
@@ -26,7 +26,7 @@ export const allIds = <T>(entities: T[], propertyName: string = 'id'): ID[] => {
  * @param entities The list of entities
  * @param [propertyName] The name of the id property.
  */
-export const byId = <T>(
+export const mapById = <T>(
   entities: Entity<T>[],
   propertyName: string = ID_PROPERTY
 ): MappedEntities<T> => (
@@ -41,6 +41,6 @@ export const byId = <T>(
  * @param mappedEntities The map of entities
  * @param ids The list of the identifiers.
  */
-export const selectIds = <T>(mappedEntities: MappedEntities<T>, ids: ID[]): Entity<T>[] => (
+export const selectByIds = <T>(mappedEntities: MappedEntities<T>, ids: ID[]): Entity<T>[] => (
   ids.map(id => mappedEntities[id])
 )

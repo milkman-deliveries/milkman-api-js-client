@@ -1,9 +1,9 @@
 /**
- * Split list of elements into chunks of a specified size.
+ * Split list of elements into splitIntoChunks of a specified size.
  * @param elements The list of elements to split.
  * @param chunkSize The maximum size of a chunk.
  */
-export const chunks = <T>(elements: T[], chunkSize: number): T[][] => {
+export const splitIntoChunks = <T>(elements: T[], chunkSize: number): T[][] => {
   if (chunkSize <= 0) return [elements]
   let i = 0
   let res = []

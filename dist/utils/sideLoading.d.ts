@@ -8,17 +8,17 @@ declare type MappedEntities<T> = {
  * @param entities The list of entities
  * @param [propertyName] The name of the id property.
  */
-export declare const allIds: <T>(entities: T[], propertyName?: string) => ID[];
+export declare const getAllIds: <T>(entities: T[], propertyName?: string) => ID[];
 /**
  * Map a list of entities by a specified identifier.
  * @param entities The list of entities
  * @param [propertyName] The name of the id property.
  */
-export declare const byId: <T>(entities: Entity<T>[], propertyName?: string) => MappedEntities<T>;
+export declare const mapById: <T>(entities: Entity<T>[], propertyName?: string) => MappedEntities<T>;
 /**
  * Map a list of entities by a specified identifier.
  * @param mappedEntities The map of entities
  * @param ids The list of the identifiers.
  */
-export declare const selectIds: <T>(mappedEntities: MappedEntities<T>, ids: ID[]) => Entity<T>[];
+export declare const selectByIds: <T>(mappedEntities: MappedEntities<T>, ids: ID[]) => Entity<T>[];
 export {};

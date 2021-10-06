@@ -31,6 +31,15 @@ It uses a polyfill fetch library for cross-browser compatibility.
 ```js
 import { ApiClient } from 'milkman-api-js-client'
 
+const api = new ApiClient()
+```
+
+#### Base URL
+
+By default, the client will call APIs on `/`.
+Alternatively it is possible to specify a different `baseUrl`.
+
+```js
 const api = new ApiClient({
   baseUrl: 'https://test.milkmantechnologies.com/'
 })
@@ -41,14 +50,18 @@ const api = new ApiClient({
 The 99% of the requests can be done only calling one of the following methods.
 
 ```js
-api.GET('/v99/foo')
-api.DELETE('/v99/foo')
-api.POST('/v99/foo', data)
-api.PATCH('/v99/foo', data)
-api.PUT('/v99/foo', data)
+api.GET(path)
+api.DELETE(path)
+api.POST(path, data)
+api.PATCH(path, data)
+api.PUT(path, data)
+
+// ex:
+api.GET('/foo/users')
+api.POST('/foo/users', { name: 'John' })
 ```
 
-- The `url` specified is prefixed with the `baseUrl`.
+- The specified `path` is prefixed with the `baseUrl` (if provided).
 - POST, PATCH and PUT methods have an additional `data` parameter, that is "stringified" and put in the body of the
   request.
 
@@ -78,7 +91,7 @@ The specified options will be passed down to the "fetch" primitive with no chang
 
 The `ApiClient` can also be _enhanced_ with custom behaviors:
 - Use `requestEnhancers` parameter to specify one or more functions for customizing request composition.
-- Use `responseHandlers` parameter to specify one or more function for customizing response handling.
+- Use `responseHandlers` parameter to specify one or more functions for customizing response handling.
 
 ```js
 // enhance request adding custom header
@@ -367,15 +380,15 @@ auth.refresh()
 
 ### Enhance API requests
 
-To easily provide authorization token to any API request, use the optional `enhancers` parameter.
+To easily provide authorization token to any API request, use the optional `requestEnhancers` parameter.
 
-`authEnhancer` automatically set the Cognito 'bearer' token in the request header.
+The `injectAuthorizationToken` function automatically sets the Cognito 'bearer' token in the request header.
 
 ```js
-import { ApiClient, authEnhancer } from 'milkman-api-js-client'
+import { ApiClient, injectAuthorizationToken } from 'milkman-api-js-client'
 
 const api = new ApiClient({
-  requestEnhancers: [authEnhancer]
+  requestEnhancers: [injectAuthorizationToken]
 })
 ```
 
@@ -398,9 +411,20 @@ After the fist call to the `login`, the `refresh` method will be automatically c
 
 ### Old (deprecated) Milkman authentication
 
-To use the old authentication, set the `useMilkmanSession` to `true`, and pass the `milkmanBaseUrl`.
+To use the old authentication based on an internal session token use the `LegacyApiAuth` class.
 
 #### Configure ApiAuth
+
+```js
+import { LegacyApiAuth } from 'milkman-api-js-client'
+
+const auth = new LegacyApiAuth()
+```
+
+#### Base URL
+
+By default, the auth APIs will be called on `/`.
+Alternatively it is possible to specify a different `baseUrl`.
 
 ```js
 const auth = new LegacyApiAuth({
@@ -414,12 +438,115 @@ const auth = new LegacyApiAuth({
 auth.login({ username: 'test@mail.it', password: '******' })
 ```
 
-#### Enhance ApiClient
+#### Enhance API requests
 
-To use the old authentication, add the `legacyAuthEnhancer` to the enhancers.
+To easily provide session token to any API request, use the optional `requestEnhancers` parameter.
+
+The `injectLegacySessionToken` function automatically sets the Milkman 'session' token in the request header.
 
 ```js
+import { ApiClient, injectLegacySessionToken } from 'milkman-api-js-client'
+
 const api = new ApiClient({
-  requestEnhancers: [legacyAuthEnhancer]
+  requestEnhancers: [injectLegacySessionToken]
 })
+```
+
+# Utilities
+
+A few other helpers provided by the library. Useful to address legacy use cases.
+
+### splitIntoChunks
+
+```js
+splitIntoChunks(elements, chunkSize)
+```
+
+An utility to split a list of elements into splitIntoChunks of the same maximum size.
+
+```js
+const allIds = [1, 2, 3, ... 42]
+const chunks = splitIntoChunks(allIds, 10)
+
+// [[1, 2, 3 ... 10],
+// [11, 12, 13, ... 20],
+// [21, 22, 23, ... 30],
+// [31, 32, 33, ... 40],
+// [40, 41, 42]]
+```
+
+### getAllIds
+
+```js
+getAllIds(entities, [propertyName])
+```
+
+An utility to collect all IDs from a list of entities.
+
+```js
+const entities = [
+  { id: 111, name: 'John' },
+  { id: 222, name: 'Ringo' }
+]
+const allIds = getAllIds(entities) // [111, 222]
+```
+
+By default, allIds looks for the `id` attribute inside the entities. It is possible to specify a different property name:
+
+```js
+const entities = [
+  { id: 111, name: 'John', vehicleId: 'abc' },
+  { id: 222, name: 'Ringo', vehicleId: 'xyz' }
+]
+const allIds = getAllIds(entities, 'vehicleId') // ['abc', 'xyz']
+```
+
+### mapById
+
+```js
+mapById(entities, [propertyName])
+```
+
+An utility to create a map of entities, indexed by their ID.
+
+```js
+const entities = [
+  { id: 111, name: 'John' },
+  { id: 222, name: 'Ringo' }
+]
+const byId = mapById(entities)
+
+/// { 111: { id: 111, ... }, 222: { id: 222, ... } }
+```
+
+By default, mapById looks for the `id` attribute inside the entities. It is possible to specify a different property name:
+
+```js
+const entities = [
+  { id: 111, name: 'John', vehicleId: 'abc' },
+  { id: 222, name: 'Ringo', vehicleId: 'xyz' }
+]
+const byId = mapById(entities, 'vehicleId')
+
+/// { 'abc': { id: 111, ... }, 'xyz': { id: 222, ... } }
+```
+
+### selectByIds
+
+```js
+selectByIds(mappedEntities, ids)
+```
+
+An utility to select a subset of entities from a map of entities, specifying a list of ids (keys of the map).
+
+```js
+const mappedEntities = {
+  111: { name: 'John' },
+  222: { name: 'Ringo' },
+  333: { name: 'George' },
+  444: { name: 'Paul' },
+}
+const selectedEntities = selectByIds(mappedEntities, [222, 444])
+
+/// [{ name: 'Ringo' }, { name: 'Paul' }]
 ```
