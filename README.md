@@ -82,13 +82,13 @@ The `ApiClient` can also be _enhanced_ with custom behaviors:
 
 ```js
 // enhance request adding custom header
-const myEnhancer = (request, info, _client) => {
+const addCustomHeader = (request, info, _client) => {
   request.headers['custom'] = 'test'
   return request
 }
 
-// handle request and, in case of error, retry the API call
-const myHandler = async (request, response, info, _client) => {
+// handle response and, in case of error, retry the API call
+const retryIfFailed = async (request, response, info, _client) => {
   if (!response.ok) {
     return await _client.fetch(info)
   }
@@ -96,8 +96,8 @@ const myHandler = async (request, response, info, _client) => {
 }
 
 const api = new ApiClient({
-  requestEnhancers: [myEnhancer],
-  responseHanlders: [myHandler]
+  requestEnhancers: [addCustomHeader],
+  responseHandlers: [retryIfFailed]
 })
 ``` 
 
