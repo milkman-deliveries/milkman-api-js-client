@@ -3,6 +3,7 @@
     "target": "es6",
     "outDir": "dist",
     "declaration": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "Node"
   }
 }

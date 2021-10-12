@@ -9,12 +9,13 @@
   ],
   "license": "MIT",
   "scripts": {
-    "bundle": "bili --format esm-min --format cjs-min",
+    "bundle": "rimraf dist && bili --format esm-min --format cjs-min",
     "test": "jest"
   },
   "dependencies": {
     "isomorphic-fetch": "^3.0.0",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "rimraf": "^3.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
