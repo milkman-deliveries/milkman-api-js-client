@@ -32,19 +32,15 @@ export class ApiFetch {
   }
 
   async applyRequestEnhancers<T>(request: RequestInit, info: ApiFetchInfo<T>): Promise<RequestInit> {
-    let enhancedRequest = request
-    for (let i = 0; i < this.requestEnhancers.length; i++) {
-      enhancedRequest = await this.requestEnhancers[i](request, info, this)
-    }
-    return enhancedRequest
+    return this.requestEnhancers.reduce<any>(async (prevRequest, enhancer) => (
+      await enhancer(prevRequest, info, this)
+    ), request)
   }
 
   async applyResponseHandlers<T>(request: RequestInit, response: Response, info: ApiFetchInfo<T>): Promise<any> {
-    let managedResponse = response
-    for (let i = 0; i < this.responseHandlers.length; i++) {
-      managedResponse = await this.responseHandlers[i](request, managedResponse, info, this)
-    }
-    return managedResponse
+    return this.responseHandlers.reduce<any>(async (prevResponse, handler) => (
+      await handler(request, prevResponse, info, this)
+    ), response)
   }
 
   async composeRequest<T>(info: ApiFetchInfo<T>): Promise<RequestInit> {
@@ -60,9 +56,8 @@ export class ApiFetch {
   async fetch<T>(info: ApiFetchInfo<T>): Promise<Response> {
     const url = this.composeUrl(info.path)
     const request = await this.composeRequest(info)
-    return fetch(url, request).then(response => (
-      this.applyResponseHandlers(request, response, info)
-    ))
+    const response = await fetch(url, request)
+    return this.applyResponseHandlers(request, response, info)
   }
 
   GET<T>(path: string, options?: any): Promise<Response> {
