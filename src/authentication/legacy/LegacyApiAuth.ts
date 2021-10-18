@@ -1,5 +1,5 @@
 import 'isomorphic-fetch'
-import { ApiClient } from '../../api/ApiClient'
+import { ApiFetch } from '../../api/ApiFetch'
 import { storeSessionToken } from '../sessionStorage'
 
 export interface LegacyApiAuthConfig {
@@ -20,7 +20,7 @@ export class LegacyApiAuth {
 
   /** Calls POST /milkman/login, retrieving Milkman session token. */
   _login(params: LegacyLoginParams): Promise<string> {
-    const client = new ApiClient({ baseUrl: this.baseUrl })
+    const client = new ApiFetch({ baseUrl: this.baseUrl })
     return client.POST('/milkman/login', params)
       .then(res => {
         if (res.ok) return res.json()

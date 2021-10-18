@@ -9,15 +9,15 @@ export interface ApiConfig {
   /** Base url for every API call. Default is "/". */
   baseUrl?: string,
   /** List of request enhancers. */
-  requestEnhancers?: RequestEnhancer[]
+  requestEnhancers?: RequestEnhancer<any>[]
   /** List of response handlers. */
-  responseHandlers?: ResponseHandler[]
+  responseHandlers?: ResponseHandler<any, any, any>[]
 }
 
-export class ApiClient {
+export class ApiFetch {
   baseUrl: string
-  requestEnhancers?: RequestEnhancer[]
-  responseHandlers?: ResponseHandler[]
+  requestEnhancers?: RequestEnhancer<any>[]
+  responseHandlers?: ResponseHandler<any, any, any>[]
 
   constructor(config: ApiConfig = {}) {
     this.baseUrl = config.baseUrl || '/'
@@ -39,10 +39,10 @@ export class ApiClient {
     return enhancedRequest
   }
 
-  async applyResponseHandlers<T>(request: RequestInit, response: Response, info: ApiFetchInfo<T>): Promise<Response> {
+  async applyResponseHandlers<T>(request: RequestInit, response: Response, info: ApiFetchInfo<T>): Promise<any> {
     let managedResponse = response
     for (let i = 0; i < this.responseHandlers.length; i++) {
-      managedResponse = await this.responseHandlers[i](request, response, info, this)
+      managedResponse = await this.responseHandlers[i](request, managedResponse, info, this)
     }
     return managedResponse
   }
@@ -51,7 +51,7 @@ export class ApiClient {
     const basicRequest = {
       method: info.method,
       headers: defaultHeaders,
-      body: JSON.stringify(info.data)
+      body: JSON.stringify(info.data),
     }
     const request = merge(basicRequest, info.options)
     return this.applyRequestEnhancers(request, info)

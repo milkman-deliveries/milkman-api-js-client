@@ -6,18 +6,18 @@ export interface ApiConfig {
     /** Base url for every API call. Default is "/". */
     baseUrl?: string;
     /** List of request enhancers. */
-    requestEnhancers?: RequestEnhancer[];
+    requestEnhancers?: RequestEnhancer<any>[];
     /** List of response handlers. */
-    responseHandlers?: ResponseHandler[];
+    responseHandlers?: ResponseHandler<any, any, any>[];
 }
-export declare class ApiClient {
+export declare class ApiFetch {
     baseUrl: string;
-    requestEnhancers?: RequestEnhancer[];
-    responseHandlers?: ResponseHandler[];
+    requestEnhancers?: RequestEnhancer<any>[];
+    responseHandlers?: ResponseHandler<any, any, any>[];
     constructor(config?: ApiConfig);
     composeUrl(path: string): string;
     applyRequestEnhancers<T>(request: RequestInit, info: ApiFetchInfo<T>): Promise<RequestInit>;
-    applyResponseHandlers<T>(request: RequestInit, response: Response, info: ApiFetchInfo<T>): Promise<Response>;
+    applyResponseHandlers<T>(request: RequestInit, response: Response, info: ApiFetchInfo<T>): Promise<any>;
     composeRequest<T>(info: ApiFetchInfo<T>): Promise<RequestInit>;
     fetch<T>(info: ApiFetchInfo<T>): Promise<Response>;
     GET<T>(path: string, options?: any): Promise<Response>;

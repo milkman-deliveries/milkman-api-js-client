@@ -1,4 +1,4 @@
-import { ApiClient } from '../api/ApiClient'
+import { ApiFetch } from '../api/ApiFetch'
 import { ApiFetchInfo } from './ApiFetchInfo'
 
-export type ResponseHandler = <T>(request: RequestInit, response: Response, info: ApiFetchInfo<T>, _client: ApiClient) => Promise<Response>
+export type ResponseHandler<T, R_I, R_O> = (request: RequestInit, response: R_I, info: ApiFetchInfo<T>, _client: ApiFetch) => Promise<R_O>

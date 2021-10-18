@@ -1,2 +1,2 @@
 import { RequestEnhancer } from '../../types/RequestEnhancer';
-export declare const injectLegacySessionToken: RequestEnhancer;
+export declare const injectLegacySessionToken: RequestEnhancer<any>;

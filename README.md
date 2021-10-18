@@ -21,17 +21,17 @@ Add dependency to the `package.json`
 "milkman-api-js-client": "git+https://github.com/milkman-deliveries/milkman-api-js-client.git"
 ```
 
-## API call
+## API fetch
 
-`ApiClient` class provides helpful methods to easily do API calls to milkman services.
+`ApiFetch` class provides helpful methods to easily do API calls to milkman services.
 It uses a polyfill fetch library for cross-browser compatibility.
 
-### Create an instance of ApiClient
+### Create an instance of ApiFetch
 
 ```js
-import { ApiClient } from 'milkman-api-js-client'
+import { ApiFetch } from 'milkman-api-js-client'
 
-const api = new ApiClient()
+const api = new ApiFetch()
 ```
 
 #### Base URL
@@ -40,7 +40,7 @@ By default, the client will call APIs on `/`.
 Alternatively it is possible to specify a different `baseUrl`.
 
 ```js
-const api = new ApiClient({
+const api = new ApiFetch({
   baseUrl: 'https://test.milkmantechnologies.com/'
 })
 ```
@@ -89,7 +89,7 @@ The specified options will be passed down to the "fetch" primitive with no chang
 
 ### Middlewares
 
-The `ApiClient` can also be _enhanced_ with custom behaviors:
+The `ApiFetch` can also be _enhanced_ with custom behaviors:
 - Use `requestEnhancers` parameter to specify one or more functions for customizing request composition.
 - Use `responseHandlers` parameter to specify one or more functions for customizing response handling.
 
@@ -108,11 +108,61 @@ const retryIfFailed = async (request, response, info, _client) => {
   return response
 }
 
-const api = new ApiClient({
+const api = new ApiFetch({
   requestEnhancers: [addCustomHeader],
   responseHandlers: [retryIfFailed]
 })
-``` 
+```
+
+#### parseContentOrThrowError
+
+The library also provides a set of build-in enhancers and handlers.
+`parseContentOrThrowError` is a response handler that checks if the response was successful and parse the `body` content with the `.json()` method;
+otherwise it throws a custom error (instance of `ApiError`).
+
+`ApiError` contains both the HTTP response status and the possible error items from the `body` content.
+
+This handler is useful to integrate with third-party library like `react-query`.
+
+##### Example:
+```js
+import { ApiFetch, parseContentOrThrowError } from 'milkman-api-js-client'
+
+const api = new ApiFetch({
+  responseHandlers: [parseContentOrThrowError]
+})
+```
+An usage with `react-query`
+```js
+import { useQuery } from 'react-query'
+
+const { error, data } = useQuery(api.GET('/myApi'))
+
+if (error) {
+  if (error instanceof ApiError) {
+    if (error.status === 401) {
+      /* error management based on status */
+    }
+    error.items.forEach(item => {
+      if (item.type === 'AUTHORIZATION__INVALID_SESSION') {
+        /* error management based on error item type */
+      }
+      if (item.category === 'AUTHORIZATION') {
+        /* error management based on error item type category */
+      }
+      if (item.reason === 'INVALID_SESSION') {
+        /* error management based on error item type reason */
+      }
+    })
+  }
+  
+  /* generic error management (fallback) */
+}
+
+return <MyComponent data={data} />
+```
+
+
 
 ## Filtering
 
@@ -385,9 +435,9 @@ To easily provide authorization token to any API request, use the optional `requ
 The `injectAuthorizationToken` function automatically sets the Cognito 'bearer' token in the request header.
 
 ```js
-import { ApiClient, injectAuthorizationToken } from 'milkman-api-js-client'
+import { ApiFetch, injectAuthorizationToken } from 'milkman-api-js-client'
 
-const api = new ApiClient({
+const api = new ApiFetch({
   requestEnhancers: [injectAuthorizationToken]
 })
 ```
@@ -445,9 +495,9 @@ To easily provide session token to any API request, use the optional `requestEnh
 The `injectLegacySessionToken` function automatically sets the Milkman 'session' token in the request header.
 
 ```js
-import { ApiClient, injectLegacySessionToken } from 'milkman-api-js-client'
+import { ApiFetch, injectLegacySessionToken } from 'milkman-api-js-client'
 
-const api = new ApiClient({
+const api = new ApiFetch({
   requestEnhancers: [injectLegacySessionToken]
 })
 ```

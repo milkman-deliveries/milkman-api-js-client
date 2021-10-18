@@ -1,17 +1,17 @@
 import { defaultHeaders } from '../utils/defaultHeaders'
-import { ApiClient } from './ApiClient'
+import { ApiFetch } from './ApiFetch'
 
-describe('ApiSort', () => {
+describe('ApiFetch', () => {
 
   describe('composeUrl', () => {
     it('works with no baseUrl', () => {
-      const api = new ApiClient()
+      const api = new ApiFetch()
       expect(api.composeUrl('test')).toEqual('/test')
       expect(api.composeUrl('/test')).toEqual('/test')
       expect(api.composeUrl('//test')).toEqual('/test')
     })
     it('works with baseUrl', () => {
-      const api = new ApiClient({ baseUrl: 'http://www.test.com' })
+      const api = new ApiFetch({ baseUrl: 'http://www.test.com' })
       expect(api.composeUrl('test')).toEqual('http://www.test.com/test')
       expect(api.composeUrl('/test')).toEqual('http://www.test.com/test')
       expect(api.composeUrl('//test')).toEqual('http://www.test.com/test')
@@ -20,7 +20,7 @@ describe('ApiSort', () => {
 
   describe('composeRequest', () => {
     it('basic', async () => {
-      const api = new ApiClient()
+      const api = new ApiFetch()
       const req = await api.composeRequest({ method: 'GET', path: '/' })
       expect(req).toEqual({
         method: 'GET',
@@ -29,7 +29,7 @@ describe('ApiSort', () => {
     })
 
     it('with custom headers', async () => {
-      const api = new ApiClient()
+      const api = new ApiFetch()
       const headers = {
         customHeader1: 'test test test',
         customHeader2: 'another test'
@@ -46,7 +46,7 @@ describe('ApiSort', () => {
     })
 
     it('with custom options', async () => {
-      const api = new ApiClient()
+      const api = new ApiFetch()
       const options = {
         integrity: 'test test test',
         keepalive: false
@@ -72,7 +72,7 @@ describe('ApiSort', () => {
         req.test = 'test'
         return req
       }
-      const api = new ApiClient({ requestEnhancers: [enhanceRequest] })
+      const api = new ApiFetch({ requestEnhancers: [enhanceRequest] })
       const req = await api.composeRequest(info)
       expect(req).toEqual({
         method: 'GET',
@@ -87,7 +87,7 @@ describe('ApiSort', () => {
         res.test = 'test'
         return res
       }
-      const api = new ApiClient({ responseHandlers: [handleResponse] })
+      const api = new ApiFetch({ responseHandlers: [handleResponse] })
       const res = await api.applyResponseHandlers(undefined, {}, info)
       expect(res).toEqual({
         test: 'test'
