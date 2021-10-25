@@ -1,5 +1,10 @@
 export const apiErrorItemTypeRegex = /(\w*)__(\w*)/
 
+const unknownApiError: ApiErrorItem = {
+  type: 'UNKNOWN__',
+  text: 'unknown error'
+}
+
 export class ApiErrorItem {
   type: string
   text?: string
@@ -28,7 +33,7 @@ export class ApiError extends Error {
   status: number
   items: ApiErrorItem[]
 
-  constructor(status: number, errors: ApiErrorItem[] = []) {
+  constructor(status: number, errors: ApiErrorItem[] = [unknownApiError]) {
     const firstError = errors[0]
     super(firstError ? `${firstError.type}: ${firstError.text}` : 'milkman-api-js-client')
     this.status = status
