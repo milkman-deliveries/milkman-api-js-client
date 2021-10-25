@@ -32,15 +32,17 @@ export class ApiFetch {
   }
 
   async applyRequestEnhancers<T>(request: RequestInit, info: ApiFetchInfo<T>): Promise<RequestInit> {
-    return this.requestEnhancers.reduce<any>(async (prevRequest, enhancer) => (
-      await enhancer(prevRequest, info, this)
-    ), request)
+    return this.requestEnhancers.reduce<any>(async (prevRequest, enhancer) => {
+      const awaitedPrevRequest = await prevRequest
+      return await enhancer(awaitedPrevRequest, info, this)
+    }, Promise.resolve(request))
   }
 
   async applyResponseHandlers<T>(request: RequestInit, response: Response, info: ApiFetchInfo<T>): Promise<any> {
-    return this.responseHandlers.reduce<any>(async (prevResponse, handler) => (
-      await handler(request, prevResponse, info, this)
-    ), response)
+    return this.responseHandlers.reduce<any>(async (prevResponse, handler) => {
+      const awaitedPrevResponse = await prevResponse
+      return await handler(request, awaitedPrevResponse, info, this)
+    }, Promise.resolve(response))
   }
 
   async composeRequest<T>(info: ApiFetchInfo<T>): Promise<RequestInit> {

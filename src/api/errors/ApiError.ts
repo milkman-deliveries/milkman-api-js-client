@@ -29,7 +29,8 @@ export class ApiError extends Error {
   items: ApiErrorItem[]
 
   constructor(status: number, errors: ApiErrorItem[] = []) {
-    super(errors[0]?.text)
+    const firstError = errors[0]
+    super(firstError ? `${firstError.type}: ${firstError.text}` : 'milkman-api-js-client')
     this.status = status
     this.items = errors
   }
