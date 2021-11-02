@@ -1,4 +1,5 @@
 export * from './api/errors/ApiError';
+export * from './api/errors/LegacyApiError';
 export * from './api/errors/parseContentOrThrowError';
 export * from './api/legacy/LegacyApiQuery';
 export * from './api/legacy/LegacyApiSort';
