@@ -12,9 +12,9 @@ export const parseContentOrThrowError = async (request: RequestInit, response: R
   }
 
   if (!response.ok || data?.errors) hasError = true
-  const errors = data?.errors
 
   if (hasError) {
+    const errors = data?.errors
     throw new ApiError(response.status, errors)
   }
 
