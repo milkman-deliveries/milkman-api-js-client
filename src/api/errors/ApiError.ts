@@ -16,11 +16,9 @@ export class ApiErrorItem {
     this.field = item.field
     this.value = item.value
 
-    let match
-    if ((match = apiErrorItemTypeRegex.test(item.type))) {
-      this.category = match[1]
-      this.reason = match[2]
-    }
+    const match = apiErrorItemTypeRegex.exec(item.type)
+    this.category = match ? match[1] : item.type
+    this.reason = match ? match[2] : null
   }
 }
 
