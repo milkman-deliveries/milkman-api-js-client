@@ -20,9 +20,9 @@ export declare class ApiFetch {
     applyResponseHandlers<T>(request: RequestInit, response: Response, info: ApiFetchInfo<T>): Promise<any>;
     composeRequest<T>(info: ApiFetchInfo<T>): Promise<RequestInit>;
     fetch<T>(info: ApiFetchInfo<T>): Promise<Response>;
-    GET<T>(path: string, options?: any): Promise<Response>;
-    POST<T>(path: string, data: any, options?: any): Promise<Response>;
-    PUT<T>(path: string, data: T, options?: any): Promise<Response>;
-    PATCH<T>(path: string, data: any, options?: any): Promise<Response>;
-    DELETE<T>(path: string, options?: any): Promise<Response>;
+    GET<T>(path: string, options?: any, meta?: object): Promise<Response>;
+    POST<T>(path: string, data: any, options?: any, meta?: object): Promise<Response>;
+    PUT<T>(path: string, data: T, options?: any, meta?: object): Promise<Response>;
+    PATCH<T>(path: string, data: any, options?: any, meta?: object): Promise<Response>;
+    DELETE<T>(path: string, options?: any, meta?: object): Promise<Response>;
 }

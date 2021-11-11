@@ -62,28 +62,28 @@ export class ApiFetch {
     return this.applyResponseHandlers(request, response, info)
   }
 
-  GET<T>(path: string, options?: any): Promise<Response> {
-    const info: ApiFetchInfo<T> = { path, method: 'GET', options }
+  GET<T>(path: string, options?: any, meta?: object): Promise<Response> {
+    const info: ApiFetchInfo<T> = { path, method: 'GET', options, meta }
     return this.fetch(info)
   }
 
-  POST<T>(path: string, data: any, options?: any): Promise<Response> {
-    const info: ApiFetchInfo<T> = { path, method: 'POST', data, options }
+  POST<T>(path: string, data: any, options?: any, meta?: object): Promise<Response> {
+    const info: ApiFetchInfo<T> = { path, method: 'POST', data, options, meta }
     return this.fetch(info)
   }
 
-  PUT<T>(path: string, data: T, options?: any): Promise<Response> {
-    const info: ApiFetchInfo<T> = { path, method: 'PUT', data, options }
+  PUT<T>(path: string, data: T, options?: any, meta?: object): Promise<Response> {
+    const info: ApiFetchInfo<T> = { path, method: 'PUT', data, options, meta }
     return this.fetch(info)
   }
 
-  PATCH<T>(path: string, data: any, options?: any): Promise<Response> {
-    const info: ApiFetchInfo<T> = { path, method: 'PATCH', data, options }
+  PATCH<T>(path: string, data: any, options?: any, meta?: object): Promise<Response> {
+    const info: ApiFetchInfo<T> = { path, method: 'PATCH', data, options, meta }
     return this.fetch(info)
   }
 
-  DELETE<T>(path: string, options?: any): Promise<Response> {
-    const info: ApiFetchInfo<T> = { path, method: 'DELETE', options }
+  DELETE<T>(path: string, options?: any, meta?: object): Promise<Response> {
+    const info: ApiFetchInfo<T> = { path, method: 'DELETE', options, meta }
     return this.fetch(info)
   }
 }
