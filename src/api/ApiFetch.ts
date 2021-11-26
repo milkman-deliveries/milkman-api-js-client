@@ -45,21 +45,27 @@ export class ApiFetch {
     }, Promise.resolve(response))
   }
 
-  async composeRequest<T>(info: ApiFetchInfo<T>): Promise<RequestInit> {
-    const basicRequest = {
+  async composeRequest<T>(info: ApiFetchInfo<T>, signal: AbortSignal): Promise<RequestInit> {
+    const basicRequest: RequestInit = {
       method: info.method,
+      signal,
       headers: defaultHeaders,
       body: JSON.stringify(info.data),
     }
-    const request = merge(basicRequest, info.options)
+    const request: RequestInit = merge(basicRequest, info.options)
     return this.applyRequestEnhancers(request, info)
   }
 
   async fetch<T>(info: ApiFetchInfo<T>): Promise<Response> {
     const url = this.composeUrl(info.path)
-    const request = await this.composeRequest(info)
+    const controller = new AbortController()
+    const signal = controller.signal;
+    const request = await this.composeRequest(info, signal)
     const response = await fetch(url, request)
-    return this.applyResponseHandlers(request, response, info)
+    const responsePromise = this.applyResponseHandlers(request, response, info)
+    // @ts-ignore
+    responsePromise.cancel = () => controller.abort()
+    return responsePromise
   }
 
   GET<T>(path: string, options?: any, meta?: object): Promise<Response> {

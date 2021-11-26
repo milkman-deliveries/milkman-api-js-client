@@ -18,7 +18,7 @@ export declare class ApiFetch {
     composeUrl(path: string): string;
     applyRequestEnhancers<T>(request: RequestInit, info: ApiFetchInfo<T>): Promise<RequestInit>;
     applyResponseHandlers<T>(request: RequestInit, response: Response, info: ApiFetchInfo<T>): Promise<any>;
-    composeRequest<T>(info: ApiFetchInfo<T>): Promise<RequestInit>;
+    composeRequest<T>(info: ApiFetchInfo<T>, signal: AbortSignal): Promise<RequestInit>;
     fetch<T>(info: ApiFetchInfo<T>): Promise<Response>;
     GET<T>(path: string, options?: any, meta?: object): Promise<Response>;
     POST<T>(path: string, data: any, options?: any, meta?: object): Promise<Response>;
