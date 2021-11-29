@@ -5,10 +5,10 @@ export const parseContentOrThrowError = async (request: RequestInit, response: R
   let data = null
 
   // try to parse JSON response.
-
-  if (response.body !== null) {
+  const bodyText = await response.text()
+  if (bodyText) {
     try {
-      data = await response.json()
+      data = JSON.parse(bodyText)
     } catch (e) {
       hasError = true
     }
