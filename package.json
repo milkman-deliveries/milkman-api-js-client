@@ -1,5 +1,5 @@
 {
-  "name": "milkman-api-js-client",
+  "name": "@milkman/milkman-api-js-client",
   "version": "1.0.2",
   "main": "dist/index.min.js",
   "module": "dist/index.esm.min.js",
@@ -10,9 +10,12 @@
   "license": "MIT",
   "scripts": {
     "bundle": "rimraf dist && bili --format esm-min --format cjs-min",
+    "bundle-no-min": "rimraf dist && bili --format esm --format cjs",
+    "co:login": "aws codeartifact login --tool npm --repository milkman --domain milkmantechnologies --namespace @milkman --domain-owner 263652615682 --profile milkman",
     "test": "jest"
   },
   "dependencies": {
+    "abortcontroller-polyfill": "^1.7.3",
     "isomorphic-fetch": "^3.0.0",
     "lodash": "^4.17.21",
     "rimraf": "^3.0.2"
