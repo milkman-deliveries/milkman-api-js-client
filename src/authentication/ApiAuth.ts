@@ -1,7 +1,7 @@
 import 'isomorphic-fetch'
 import { defaultHeaders } from '../utils/defaultHeaders'
 import {
-  retrieveIdToken, retrieveRefreshToken, storeIdToken, storeRefreshToken, storeSessionToken,
+  TokenStore, DefaultIdTokenStore, DefaultRefreshTokenStore, DefaultSessionTokenStore
 } from './sessionStorage'
 
 export const COGNITO_ENDPOINT = 'https://auth.milkmantechnologies.com/'
@@ -25,6 +25,9 @@ export interface ApiAuthConfig {
   // legacy authentication
   useMilkmanSession?: boolean
   milkmanBaseUrl?: string
+  idTokenStore?: TokenStore,
+  refreshTokenStore?: TokenStore
+  sessionTokenStore?: TokenStore
 }
 
 export class ApiAuth {
@@ -37,6 +40,9 @@ export class ApiAuth {
   milkmanBaseUrl?: string
 
   sessionTimeout: NodeJS.Timeout
+  idTokenStore: TokenStore
+  refreshTokenStore: TokenStore
+  sessionTokenStore: TokenStore
 
   constructor(config: ApiAuthConfig) {
     this.application = config.application
@@ -46,6 +52,9 @@ export class ApiAuth {
     // legacy authentication
     this.useMilkmanSession = config.useMilkmanSession || false
     this.milkmanBaseUrl = config.milkmanBaseUrl || '/'
+    this.idTokenStore = config.idTokenStore || new DefaultIdTokenStore()
+    this.refreshTokenStore = config.refreshTokenStore || new DefaultRefreshTokenStore()
+    this.sessionTokenStore = config.sessionTokenStore || new DefaultSessionTokenStore()
   }
 
   get cognitoAuthUrl() {
@@ -95,7 +104,7 @@ export class ApiAuth {
         ClientId: this.clientId,
         AuthFlow: AuthenticationMethod.REFRESH_TOKEN,
         AuthParameters: {
-          REFRESH_TOKEN: retrieveRefreshToken(),
+          REFRESH_TOKEN: this.refreshTokenStore.getToken(),
         },
       }),
     })
@@ -117,7 +126,7 @@ export class ApiAuth {
       method: 'GET',
       headers: {
         ...defaultHeaders,
-        authorization: `Bearer ${retrieveIdToken()}`,
+        authorization: `Bearer ${this.idTokenStore.getToken()}`,
       },
     })
       .then(res => {
@@ -147,14 +156,14 @@ export class ApiAuth {
     const {IdToken, RefreshToken} = await this._cognitoLogin(username, password)
       .catch(() => Promise.reject())
 
-    storeIdToken(IdToken)
-    storeRefreshToken(RefreshToken)
+    this.idTokenStore.saveToken(IdToken)
+    this.refreshTokenStore.saveToken(RefreshToken)
 
     if (this.useMilkmanSession) {
       const session = await this._resolveUser()
         .catch(() => Promise.reject())
 
-      storeSessionToken(session)
+      this.sessionTokenStore.saveToken(session)
     }
 
     if (this.automaticRefresh) {
@@ -172,13 +181,13 @@ export class ApiAuth {
     const {IdToken} = await this._cognitoRefresh()
       .catch(() => Promise.reject())
 
-    storeIdToken(IdToken)
+    this.idTokenStore.saveToken(IdToken)
 
     if (this.useMilkmanSession) {
       const session = await this._resolveUser()
         .catch(() => Promise.reject())
 
-      storeSessionToken(session)
+      this.sessionTokenStore.saveToken(session)
     }
 
     if (this.automaticRefresh) {

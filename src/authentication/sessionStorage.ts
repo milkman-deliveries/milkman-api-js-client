@@ -30,3 +30,35 @@ export const retrieveSessionToken = (): string => (
 export const storeSessionToken = (token: string): void => (
   sessionStorage.setItem(SESSION_TOKEN_KEY, token)
 )
+
+export interface TokenStore {
+    getToken(): string
+    saveToken(value: string): void
+}
+
+export class DefaultSessionTokenStore implements TokenStore {
+    getToken(): string {
+        return retrieveSessionToken()
+    }
+
+    saveToken(value: string) {
+        storeSessionToken(value)
+    }
+}
+
+export class DefaultIdTokenStore implements TokenStore {
+    getToken(): string {
+        return retrieveIdToken()
+    }
+    saveToken(value: string) {
+        storeIdToken(value)
+    }
+}
+export class DefaultRefreshTokenStore implements TokenStore {
+    getToken(): string {
+        return retrieveRefreshToken()
+    }
+    saveToken(value: string) {
+        storeRefreshToken(value)
+    }
+}

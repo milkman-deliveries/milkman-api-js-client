@@ -1,9 +1,21 @@
-import { mockFetch } from '../../jest/mocks/fetch.mock'
-import { ApiAuth, COGNITO_ENDPOINT } from './ApiAuth'
+import {mockFetch} from '../../jest/mocks/fetch.mock'
+import {ApiAuth, COGNITO_ENDPOINT} from './ApiAuth'
+
+const MockedTokenStore  = (val = '') => {
+  return {
+    getToken() {
+      return val
+    },
+    saveToken(value) {
+    }
+  }
+}
 
 const authBasicConfig = {
   application: 'test',
-  clientId: 'test123'
+  clientId: 'test123',
+  idTokenStore: MockedTokenStore(''),
+  refreshTokenStore: MockedTokenStore('testRefreshToken')
 }
 
 const cognitoLoginSuccessResponse = {
@@ -13,16 +25,10 @@ const cognitoLoginSuccessResponse = {
   }
 }
 
-jest.mock('./sessionStorage', () => ({
-  storeIdToken: () => undefined,
-  storeRefreshToken: () => undefined,
-  retrieveRefreshToken: () => 'testRefreshToken'
-}))
-
 describe('ApiAuth', () => {
   describe('authUrl', () => {
     it('compose application auth endpoint', () => {
-      const auth = new ApiAuth(authBasicConfig)
+      const auth = new ApiAuth(authBasicConfig )
       expect(auth.cognitoAuthUrl).toEqual(`${COGNITO_ENDPOINT}test/login`)
     })
   })
