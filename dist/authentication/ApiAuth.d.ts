@@ -1,5 +1,6 @@
 /// <reference types="node" />
 import 'isomorphic-fetch';
+import { TokenStore } from './sessionStorage';
 export declare const COGNITO_ENDPOINT = "https://auth.milkmantechnologies.com/";
 export declare const COGNITO_TOKEN_TIMEOUT: number;
 export declare enum AuthenticationMethod {
@@ -17,6 +18,9 @@ export interface ApiAuthConfig {
     refreshTimeoutMs?: number;
     useMilkmanSession?: boolean;
     milkmanBaseUrl?: string;
+    idTokenStore?: TokenStore;
+    refreshTokenStore?: TokenStore;
+    sessionTokenStore?: TokenStore;
 }
 export declare class ApiAuth {
     application: string;
@@ -26,6 +30,9 @@ export declare class ApiAuth {
     useMilkmanSession: boolean;
     milkmanBaseUrl?: string;
     sessionTimeout: NodeJS.Timeout;
+    idTokenStore: TokenStore;
+    refreshTokenStore: TokenStore;
+    sessionTokenStore: TokenStore;
     constructor(config: ApiAuthConfig);
     get cognitoAuthUrl(): string;
     get milkmanResolveUserUrl(): string;

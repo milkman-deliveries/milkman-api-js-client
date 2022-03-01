@@ -1,3 +1,5 @@
+import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
+
 export * from './api/errors/ApiError'
 export * from './api/errors/parseContentOrThrowError'
 export * from './api/legacy/LegacyApiQuery'

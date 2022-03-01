@@ -1,5 +1,5 @@
 import 'isomorphic-fetch'
-import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
+import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only'
 import merge from 'lodash/merge'
 import { ApiFetchInfo } from '../types/ApiFetchInfo'
 import { RequestEnhancer } from '../types/RequestEnhancer'

@@ -1,4 +1,5 @@
 import 'isomorphic-fetch';
+import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only';
 import { ApiFetchInfo } from '../types/ApiFetchInfo';
 import { RequestEnhancer } from '../types/RequestEnhancer';
 import { ResponseHandler } from '../types/ResponseHandler';

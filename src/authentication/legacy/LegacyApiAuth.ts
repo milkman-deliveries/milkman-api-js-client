@@ -1,24 +1,26 @@
 import 'isomorphic-fetch'
 import { ApiFetch } from '../../api/ApiFetch'
-import {TokenStore, storeSessionToken, retrieveSessionToken, DefaultSessionTokenStore} from '../sessionStorage'
+import {TokenStore, DefaultSessionTokenStore} from '../sessionStorage'
 
 export interface LegacyApiAuthConfig {
   baseUrl?: string
-  store: TokenStore
+  sessionTokenStore: TokenStore
 }
 
 export interface LegacyLoginParams extends Map<string, any> {
   username?: string
   password?: string
+  loginSource?: string
+  rememberMe?: boolean
 }
 
 export class LegacyApiAuth {
   baseUrl: string
-  tokenStore: TokenStore
+  sessionTokenStore: TokenStore
 
   constructor(config: LegacyApiAuthConfig) {
     this.baseUrl = config.baseUrl || '/'
-    this.tokenStore = config.store || new DefaultSessionTokenStore()
+    this.sessionTokenStore = config.sessionTokenStore || new DefaultSessionTokenStore()
   }
 
   /** Calls POST /milkman/login, retrieving Milkman session token. */
@@ -27,7 +29,7 @@ export class LegacyApiAuth {
     return client.POST('/milkman/login', params)
       .then(res => {
         if (res.ok) return res.json()
-        throw new Error()
+        throw new Error(`${res.status} - ${res.statusText}`)
       })
       .then(({result}) => {
         if (result.success && result.session) return result.session
@@ -39,7 +41,7 @@ export class LegacyApiAuth {
     const session = await this._login(params)
       .catch(() => Promise.reject())
 
-    this.tokenStore.saveToken(session)
+    this.sessionTokenStore.saveToken(session)
     return Promise.resolve(true)
   }
 }
