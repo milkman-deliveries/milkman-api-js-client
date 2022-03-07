@@ -1,3 +1,4 @@
+import { LegacyApiAuth } from '../../../dist'
 import { mockFetch } from '../../jest/mocks/fetch.mock'
 import { ApiAuth, COGNITO_ENDPOINT, COGNITO_ID_TOKEN_KEY, COGNITO_REFRESH_TOKEN_KEY } from './ApiAuth'
 
@@ -23,10 +24,10 @@ const authBasicConfig = {
   refreshTokenStore: new MockedTokenStore(COGNITO_REFRESH_TOKEN_KEY, 'testRefreshToken')
 }
 
-describe('ApiAuth', () => {
+describe('LegacyApiAuth', () => {
   describe('authUrl', () => {
     it('compose application auth endpoint', () => {
-      const auth = new ApiAuth(authBasicConfig)
+      const auth = new LegacyApiAuth(authBasicConfig)
       expect(auth.cognitoAuthUrl).toEqual(`${COGNITO_ENDPOINT}test/login`)
     })
   })
