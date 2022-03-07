@@ -10,7 +10,7 @@
   "license": "MIT",
   "scripts": {
     "bundle": "rimraf dist && bili --format esm-min --format cjs-min",
-    "bundle-no-min": "rimraf dist && bili --format esm --format cjs",
+    "bundle:no-min": "rimraf dist && bili --format esm --format cjs",
     "co:login": "aws codeartifact login --tool npm --repository milkman --domain milkmantechnologies --namespace @milkman --domain-owner 263652615682 --profile milkman",
     "test": "jest"
   },
@@ -24,12 +24,13 @@
     "@babel/core": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
     "@babel/preset-typescript": "^7.15.0",
-    "@types/jest": "^27.0.1",
+    "@types/jest": "^27.4.1",
     "@types/lodash": "^4.14.175",
     "bili": "^5.0.5",
-    "jest": "^27.1.0",
+    "jest": "^27.5.1",
     "rollup": "^2.56.3",
     "rollup-plugin-typescript2": "^0.30.0",
+    "sinon": "^13.0.1",
     "typescript": "^4.4.2"
   }
 }

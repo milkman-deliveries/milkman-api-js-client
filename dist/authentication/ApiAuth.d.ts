@@ -1,8 +1,10 @@
 /// <reference types="node" />
 import 'isomorphic-fetch';
-import { TokenStore } from './sessionStorage';
+import { TokenStore } from '../storage/TokenStore';
 export declare const COGNITO_ENDPOINT = "https://auth.milkmantechnologies.com/";
 export declare const COGNITO_TOKEN_TIMEOUT: number;
+export declare const COGNITO_ID_TOKEN_KEY = "MILKMAN_COGNITO_ID_TOKEN";
+export declare const COGNITO_REFRESH_TOKEN_KEY = "MILKMAN_COGNITO_REFRESH_TOKEN";
 export declare enum AuthenticationMethod {
     USER_PASSWORD = "USER_PASSWORD_AUTH",
     REFRESH_TOKEN = "REFRESH_TOKEN_AUTH"
@@ -11,29 +13,29 @@ export interface CognitoAuthResponse {
     IdToken: string;
     RefreshToken: string;
 }
-export interface ApiAuthConfig {
+export interface ApiAuthConfig<T extends TokenStore> {
     application: string;
     clientId: string;
     automaticRefresh?: boolean;
     refreshTimeoutMs?: number;
+    idTokenStore?: T;
+    refreshTokenStore?: T;
     useMilkmanSession?: boolean;
     milkmanBaseUrl?: string;
-    idTokenStore?: TokenStore;
-    refreshTokenStore?: TokenStore;
-    sessionTokenStore?: TokenStore;
+    sessionTokenStore?: T;
 }
-export declare class ApiAuth {
+export declare class ApiAuth<T extends TokenStore> {
     application: string;
     clientId: string;
     automaticRefresh: boolean;
     refreshTimeoutMs: number;
+    idTokenStore: T;
+    refreshTokenStore: T;
     useMilkmanSession: boolean;
     milkmanBaseUrl?: string;
+    sessionTokenStore: T;
     sessionTimeout: NodeJS.Timeout;
-    idTokenStore: TokenStore;
-    refreshTokenStore: TokenStore;
-    sessionTokenStore: TokenStore;
-    constructor(config: ApiAuthConfig);
+    constructor(config: ApiAuthConfig<T>);
     get cognitoAuthUrl(): string;
     get milkmanResolveUserUrl(): string;
     /**

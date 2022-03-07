@@ -1,17 +1,19 @@
 import 'isomorphic-fetch';
-import { TokenStore } from '../sessionStorage';
-export interface LegacyApiAuthConfig {
+import { TokenStore } from '../../storage/TokenStore';
+export interface LegacyApiAuthConfig<T extends TokenStore> {
     baseUrl?: string;
-    store: TokenStore;
+    sessionTokenStore: T;
 }
 export interface LegacyLoginParams extends Map<string, any> {
     username?: string;
     password?: string;
+    loginSource?: string;
+    rememberMe?: boolean;
 }
-export declare class LegacyApiAuth {
+export declare class LegacyApiAuth<T extends TokenStore> {
     baseUrl: string;
-    tokenStore: TokenStore;
-    constructor(config: LegacyApiAuthConfig);
+    sessionTokenStore: T;
+    constructor(config: LegacyApiAuthConfig<T>);
     /** Calls POST /milkman/login, retrieving Milkman session token. */
     _login(params: LegacyLoginParams): Promise<string>;
     login(params: LegacyLoginParams): Promise<boolean>;

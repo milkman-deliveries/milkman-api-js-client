@@ -1,10 +1,10 @@
 import 'isomorphic-fetch'
 import { ApiFetch } from '../../api/ApiFetch'
-import {TokenStore, DefaultSessionTokenStore} from '../sessionStorage'
+import { TokenStore } from '../../storage/TokenStore'
 
-export interface LegacyApiAuthConfig {
+export interface LegacyApiAuthConfig<T extends TokenStore> {
   baseUrl?: string
-  sessionTokenStore: TokenStore
+  sessionTokenStore: T
 }
 
 export interface LegacyLoginParams extends Map<string, any> {
@@ -14,13 +14,13 @@ export interface LegacyLoginParams extends Map<string, any> {
   rememberMe?: boolean
 }
 
-export class LegacyApiAuth {
+export class LegacyApiAuth<T extends TokenStore> {
   baseUrl: string
-  sessionTokenStore: TokenStore
+  sessionTokenStore: T
 
-  constructor(config: LegacyApiAuthConfig) {
+  constructor(config: LegacyApiAuthConfig<T>) {
     this.baseUrl = config.baseUrl || '/'
-    this.sessionTokenStore = config.sessionTokenStore || new DefaultSessionTokenStore()
+    this.sessionTokenStore = config.sessionTokenStore
   }
 
   /** Calls POST /milkman/login, retrieving Milkman session token. */
@@ -41,7 +41,7 @@ export class LegacyApiAuth {
     const session = await this._login(params)
       .catch(() => Promise.reject())
 
-    this.sessionTokenStore.saveToken(session)
+    this.sessionTokenStore.store(session)
     return Promise.resolve(true)
   }
 }
