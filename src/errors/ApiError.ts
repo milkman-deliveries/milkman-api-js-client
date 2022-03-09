@@ -1,3 +1,5 @@
+import { ApiResponseError } from '../types/ApiResponseData'
+
 export const apiErrorItemTypeRegex = /(\w*)__(\w*)/
 
 export class ApiErrorItem {
@@ -10,7 +12,7 @@ export class ApiErrorItem {
   category?: string
   reason?: string
 
-  constructor(item: any) {
+  constructor(item: ApiResponseError) {
     this.type = item.type
     this.text = item.text
     this.field = item.field
@@ -26,9 +28,9 @@ export class ApiError extends Error {
   status: number
   items: ApiErrorItem[]
 
-  constructor(status: number, errors: ApiErrorItem[] = []) {
+  constructor(status: number, errors: ApiResponseError[] = []) {
     super(errors.length ? `${errors[0].type}: ${errors[0].text}` : 'milkman-api-js-client')
     this.status = status
-    this.items = errors
+    this.items = errors.map(err => new ApiErrorItem(err))
   }
 }

@@ -7,4 +7,6 @@ module.exports = {
   },
   testMatch: ['**/?(*.)+(test).js'],
   testEnvironment: 'jsdom',
-};
+  // setupFilesAfterEnv: ['<rootDir>/tests/testsAfterEnv.setup.js'],
+  setupFiles: ['<rootDir>/tests/setupFiles.js'],
+}

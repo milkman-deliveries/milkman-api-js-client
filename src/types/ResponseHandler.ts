@@ -1,4 +1,9 @@
-import { ApiFetch } from '../api/ApiFetch'
-import { ApiFetchInfo } from './ApiFetchInfo'
+import { ApiFetch } from '../fetch/ApiFetch'
+import { ApiRequestInfo } from './ApiRequestInfo'
+import { ApiResponseInfo } from './ApiResponseInfo'
 
-export type ResponseHandler<T, R_I, R_O> = (request: RequestInit, response: R_I, info: ApiFetchInfo<T>, _client: ApiFetch) => Promise<R_O>
+export type ResponseHandler<T_REQ, T_PREV_RES, T_HANDLED_RES> = (
+  requestInfo: ApiRequestInfo<T_REQ>,
+  responseInfo: ApiResponseInfo<T_PREV_RES>,
+  _client: ApiFetch
+) => Promise<ApiResponseInfo<T_HANDLED_RES>>

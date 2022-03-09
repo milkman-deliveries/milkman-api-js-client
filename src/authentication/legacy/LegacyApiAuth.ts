@@ -1,5 +1,5 @@
 import 'isomorphic-fetch'
-import { ApiFetch } from '../../api/ApiFetch'
+import { ApiFetch } from '../../fetch/ApiFetch'
 import { TokenStore } from '../../storage/TokenStore'
 
 export interface LegacyApiAuthConfig<T extends TokenStore> {
