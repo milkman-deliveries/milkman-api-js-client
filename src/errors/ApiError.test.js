@@ -32,11 +32,14 @@ describe('ApiError', () => {
   it('constructor', () => {
     const httpStatus = 200
     const items = [
-      { type: 'test type' },
-      { type: 'test type' },
+      { type: 'test type 1' },
+      { type: 'test type 2' },
     ]
-    expect(new ApiError(httpStatus, items).status).toEqual(httpStatus)
-    expect(new ApiError(400, items).items).toEqual(items)
+    const apiError = new ApiError(httpStatus, items)
+    expect(apiError.status).toEqual(httpStatus)
+    expect(apiError.items.length).toEqual(2)
+    expect(apiError.items[0].type).toEqual('test type 1')
+    expect(apiError.items[1].type).toEqual('test type 2')
   })
 
 })

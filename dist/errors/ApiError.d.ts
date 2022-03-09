@@ -1,3 +1,4 @@
+import { ApiResponseError } from '../types/ApiResponseData';
 export declare const apiErrorItemTypeRegex: RegExp;
 export declare class ApiErrorItem {
     type: string;
@@ -6,10 +7,10 @@ export declare class ApiErrorItem {
     value?: any;
     category?: string;
     reason?: string;
-    constructor(item: any);
+    constructor(item: ApiResponseError);
 }
 export declare class ApiError extends Error {
     status: number;
     items: ApiErrorItem[];
-    constructor(status: number, errors?: ApiErrorItem[]);
+    constructor(status: number, errors?: ApiResponseError[]);
 }

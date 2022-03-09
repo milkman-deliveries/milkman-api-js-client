@@ -1,3 +1,5 @@
+import { ApiRequestInfo } from '../types/ApiRequestInfo'
+import { ApiResponseInfo } from '../types/ApiResponseInfo'
 import { defaultHeaders } from '../utils/defaultHeaders'
 import { ApiFetch } from './ApiFetch'
 
@@ -67,31 +69,39 @@ describe('ApiFetch', () => {
   describe('middleware', () => {
 
     it('requestEnhancer', async () => {
-      const info = { method: 'GET', path: '/' }
-      const enhanceRequest = req => {
-        req.test = 'test'
-        return req
+      const enhancer = (reqInfo) => {
+        reqInfo.options.test = 'test'
+        reqInfo.meta.counter = 123
+        return reqInfo
       }
-      const api = new ApiFetch({ requestEnhancers: [enhanceRequest] })
-      const req = await api.composeRequest(info)
-      expect(req).toEqual({
-        method: 'GET',
-        headers: defaultHeaders,
-        test: 'test'
-      })
+      const fetcher = new ApiFetch({ requestEnhancers: [enhancer] })
+      const info = new ApiRequestInfo('/foo/path', 'GET')
+
+      const enhancedInfo = await fetcher.enhanceRequestInfo(info)
+      expect(enhancedInfo.options.test).toBeDefined()
+      expect(enhancedInfo.options.test).toEqual('test')
+      expect(enhancedInfo.meta.counter).toBeDefined()
+      expect(enhancedInfo.meta.counter).toEqual(123)
+
+      const req = await fetcher.composeRequest(info, undefined)
+      expect(req.test).toBeDefined()
+      expect(req.test).toEqual('test')
     })
 
     it('responseHandler', async () => {
-      const info = { method: 'GET', path: '/' }
       const handleResponse = (req, res) => {
-        res.test = 'test'
+        res.response.test = 'test'
+        res.data = 'data'
         return res
       }
-      const api = new ApiFetch({ responseHandlers: [handleResponse] })
-      const res = await api.applyResponseHandlers(undefined, {}, info)
-      expect(res).toEqual({
-        test: 'test'
-      })
+      const fetcher = new ApiFetch({ responseHandlers: [handleResponse] })
+      const reqInfo = new ApiRequestInfo('/foo/path', 'GET')
+      const resInfo = new ApiResponseInfo(new Response())
+      const handledInfo = await fetcher.applyResponseHandlers(reqInfo, resInfo)
+      expect(handledInfo.response.test).toBeDefined()
+      expect(handledInfo.response.test).toEqual('test')
+      expect(handledInfo.data).toBeDefined()
+      expect(handledInfo.data).toEqual('data')
     })
   })
 })

@@ -1,12 +1,20 @@
-export interface ApiRequestInfo<T_REQ> {
+export class ApiRequestInfo<T_REQ> {
   /** HTTP Request path */
   path: string
   /** HTTP Request method */
-  method: string,
+  method: string
   /** HTTP Request body data */
-  data?: T_REQ
+  data?: T_REQ | undefined
   /** HTTP Request options. */
-  options?: Partial<RequestInit>,
+  options: Partial<RequestInit>
   /** Additional data used for requests management. */
-  meta?: object
+  meta: object
+
+  constructor(path: string, method: string, data?: T_REQ, options: any = {}, meta: object = {}) {
+    this.path = path
+    this.method = method
+    this.data = data
+    this.options = options
+    this.meta = meta
+  }
 }

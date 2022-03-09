@@ -1,4 +1,5 @@
 import { ApiErrorCategory } from '../errors/ApiErrorCategory'
+import { ApiResponseInfo } from '../types/ApiResponseInfo'
 import { ResponseHandler } from '../types/ResponseHandler'
 
 const malformedContentError = {
@@ -20,5 +21,5 @@ export const parseContent: ResponseHandler<any, Response, object> = async (reque
     }
   }
 
-  return { ...responseInfo, data }
+  return new ApiResponseInfo(responseInfo.response, data)
 }

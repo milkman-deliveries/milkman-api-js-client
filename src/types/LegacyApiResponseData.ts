@@ -3,11 +3,14 @@ export interface LegacyApiResponseError {
   message?: string
 }
 
-export interface LegacyApiResponseData {
-  result: {
-    success: boolean
-    errors?: LegacyApiResponseError[]
-    count?: number
-    entities?: object[]
-  }
+export interface LegacyApiResponseResult {
+  success: boolean
+  session?: string
+  errors?: LegacyApiResponseError[]
+  count?: number
+  entities?: object[]
+}
+
+export  interface  LegacyApiResponseData {
+  result: LegacyApiResponseResult
 }

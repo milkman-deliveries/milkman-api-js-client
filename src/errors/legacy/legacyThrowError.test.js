@@ -1,10 +1,11 @@
+import { ApiResponseInfo } from '../../types/ApiResponseInfo'
 import { legacyThrowError } from './legacyThrowError'
 
 describe('legacyThrowError', () => {
 
   const createResponseInfo = (data, init) => {
     const response = new Response(JSON.stringify(data), init)
-    return { response, data }
+    return new ApiResponseInfo(response, data)
   }
 
   it('throw a generic error if response ok is set to false', async () => {
@@ -35,8 +36,24 @@ describe('legacyThrowError', () => {
     }
   })
 
+  it('throw a generic error if response has success property set to false', async () => {
+    const responseData = { success: false }
+    const responseInfo = createResponseInfo(responseData)
+
+    expect.assertions(3);
+    try {
+      await legacyThrowError(undefined, responseInfo, undefined)
+    } catch(e) {
+      expect(e).toEqual(new Error('milkman-api-js-client'))
+      expect(e.status).toEqual(200)
+      expect(e.items).toEqual([])
+    }
+  })
+
   it('throw a specific error if response contains an error item', async () => {
-    const responseData = { errors: [{ code: 'foo', message: 'error description' }] }
+    const responseData = {
+      errors: [{ code: 'foo', message: 'error description' }]
+    }
     const responseInfo = createResponseInfo(responseData)
 
     expect.assertions(5);
@@ -52,10 +69,12 @@ describe('legacyThrowError', () => {
   })
 
   it('throw a specific error if response contains many error items', async () => {
-    const responseData = { errors: [
-      { code: 'foo123', message: 'error description 123' },
-      { code: 'foo456', message: 'error description 456' },
-      ] }
+    const responseData = {
+      errors: [
+        { code: 'foo123', message: 'error description 123' },
+        { code: 'foo456', message: 'error description 456' },
+      ]
+    }
     const responseInfo = createResponseInfo(responseData)
 
     expect.assertions(7);
@@ -73,7 +92,7 @@ describe('legacyThrowError', () => {
   })
 
   it('does not throw any error if response is ok', async () => {
-    const responseInfo = createResponseInfo({})
+    const responseInfo = createResponseInfo({ success: true })
     const handledInfo = await legacyThrowError(undefined, responseInfo, undefined)
     expect(handledInfo).toEqual(responseInfo)
   })

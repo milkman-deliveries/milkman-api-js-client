@@ -1,3 +1,4 @@
+import { ApiResponseInfo } from '../../types/ApiResponseInfo'
 import { ResponseHandler } from '../../types/ResponseHandler'
 
 const malformedContentError = {
@@ -21,5 +22,5 @@ export const legacyParseContent: ResponseHandler<any, Response, object> = async 
     data = malformedContentError
   }
 
-  return { ...responseInfo, data }
+  return new ApiResponseInfo(responseInfo.response, data)
 }

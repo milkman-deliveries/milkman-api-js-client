@@ -76,7 +76,7 @@ export class ApiFetch {
     // do the request
     const response = await fetch(url, request)
     // compose the initial response info with just the response itself as data
-    const responseInfo: ApiResponseInfo<Response> = { response, data: response }
+    const responseInfo = new ApiResponseInfo<Response>(response)
     // apply any response handler to the initial response info
     const handledResponseInfoPromise = this.applyResponseHandlers<T_REQ, Response, T_RES>(enhancedRequestInfo, responseInfo)
     // @ts-ignore
@@ -87,27 +87,27 @@ export class ApiFetch {
   }
 
   GET<T_REQ, T_RES>(path: string, options?: any, meta?: object): Promise<T_RES> {
-    const info: ApiRequestInfo<T_REQ> = { path, method: 'GET', options, meta }
+    const info = new ApiRequestInfo<T_REQ>(path, 'GET', undefined, options, meta)
     return this.fetch<T_REQ, T_RES>(info)
   }
 
   POST<T_REQ, T_RES>(path: string, data: T_REQ, options?: any, meta?: object): Promise<T_RES> {
-    const info: ApiRequestInfo<T_REQ> = { path, method: 'POST', data, options, meta }
+    const info = new ApiRequestInfo<T_REQ>(path, 'POST', data, options, meta)
     return this.fetch(info)
   }
 
   PUT<T_REQ, T_RES>(path: string, data: T_REQ, options?: any, meta?: object): Promise<T_RES> {
-    const info: ApiRequestInfo<T_REQ> = { path, method: 'PUT', data, options, meta }
+    const info = new ApiRequestInfo<T_REQ>(path, 'PUT', data, options, meta)
     return this.fetch(info)
   }
 
   PATCH<T_REQ, T_RES>(path: string, data: T_REQ, options?: any, meta?: object): Promise<T_RES> {
-    const info: ApiRequestInfo<T_REQ> = { path, method: 'PATCH', data, options, meta }
+    const info = new ApiRequestInfo<T_REQ>(path, 'PATCH', data, options, meta)
     return this.fetch(info)
   }
 
   DELETE<T_REQ, T_RES>(path: string, options?: any, meta?: object): Promise<T_RES> {
-    const info: ApiRequestInfo<T_REQ> = { path, method: 'DELETE', options, meta }
+    const info = new ApiRequestInfo<T_REQ>(path, 'DELETE', undefined, options, meta)
     return this.fetch(info)
   }
 }
