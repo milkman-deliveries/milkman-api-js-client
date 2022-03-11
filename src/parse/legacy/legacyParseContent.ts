@@ -1,5 +1,4 @@
-import { ApiResponseInfo } from '../../types/ApiResponseInfo'
-import { ResponseHandler } from '../../types/ResponseHandler'
+import { ResponseHandler } from '../../fetch/types/ResponseHandler'
 
 const malformedContentError = {
   errors: [{
@@ -7,20 +6,20 @@ const malformedContentError = {
   }],
 }
 
-export const legacyParseContent: ResponseHandler<any, Response, object> = async (requestInfo, responseInfo) => {
-  let data
+export const legacyParseContent: ResponseHandler<any, Response, object> = async (info) => {
+  let responseData
 
   // try to parse JSON response.
   try {
-    const json = await responseInfo.response.json()
+    const json = await info.response.json()
     if (json.hasOwnProperty('result')) {
-      data = json.result
+      responseData = json.result
     } else {
-      data = malformedContentError
+      responseData = malformedContentError
     }
   } catch (e) {
-    data = malformedContentError
+    responseData = malformedContentError
   }
 
-  return new ApiResponseInfo(responseInfo.response, data)
+  return { ...info, responseData }
 }

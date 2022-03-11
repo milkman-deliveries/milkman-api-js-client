@@ -1,4 +1,4 @@
-import { LegacyApiResponseError } from '../../types/LegacyApiResponseData'
+import { LegacyApiResponseError } from '../../fetch/types/LegacyApiResponseData'
 
 export class LegacyApiError extends Error {
   status: number

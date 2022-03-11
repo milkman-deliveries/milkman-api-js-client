@@ -1,4 +1,3 @@
-import { ApiRequestInfo } from '../types/ApiRequestInfo'
 import { injectAuthorizationTokenFactory } from './injectAuthorizationTokenFactory'
 
 class MockedStore {
@@ -22,9 +21,9 @@ describe('injectAuthorizationTokenFactory', () => {
   it('injects session token in request header', async () => {
     const injectAuthorizationToken = createEnhancer('session token value')
 
-    const requestInfo = new ApiRequestInfo('/foo/path', 'GET')
-    const enhancedRequestInfo = await injectAuthorizationToken(requestInfo, undefined)
-    expect(enhancedRequestInfo.options.headers.authorization).toBeDefined()
-    expect(enhancedRequestInfo.options.headers.authorization).toEqual('Bearer session token value')
+    const info = { meta: {}, path: '/foo/path', method: 'GET', options: {} }
+    const enhancedInfo = await injectAuthorizationToken(info, undefined)
+    expect(enhancedInfo.options.headers.authorization).toBeDefined()
+    expect(enhancedInfo.options.headers.authorization).toEqual('Bearer session token value')
   })
 })

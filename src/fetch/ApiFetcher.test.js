@@ -1,19 +1,17 @@
-import { ApiRequestInfo } from '../types/ApiRequestInfo'
-import { ApiResponseInfo } from '../types/ApiResponseInfo'
 import { defaultHeaders } from '../utils/defaultHeaders'
-import { ApiFetch } from './ApiFetch'
+import { ApiFetcher } from './ApiFetcher'
 
 describe('ApiFetch', () => {
 
   describe('composeUrl', () => {
     it('works with no baseUrl', () => {
-      const api = new ApiFetch()
+      const api = new ApiFetcher()
       expect(api.composeUrl('test')).toEqual('/test')
       expect(api.composeUrl('/test')).toEqual('/test')
       expect(api.composeUrl('//test')).toEqual('/test')
     })
     it('works with baseUrl', () => {
-      const api = new ApiFetch({ baseUrl: 'http://www.test.com' })
+      const api = new ApiFetcher({ baseUrl: 'http://www.test.com' })
       expect(api.composeUrl('test')).toEqual('http://www.test.com/test')
       expect(api.composeUrl('/test')).toEqual('http://www.test.com/test')
       expect(api.composeUrl('//test')).toEqual('http://www.test.com/test')
@@ -22,8 +20,8 @@ describe('ApiFetch', () => {
 
   describe('composeRequest', () => {
     it('basic', async () => {
-      const api = new ApiFetch()
-      const req = await api.composeRequest({ method: 'GET', path: '/' })
+      const api = new ApiFetcher()
+      const req = await api.composeRequest({ meta: {}, method: 'GET', path: '/', options: {} }, undefined)
       expect(req).toEqual({
         method: 'GET',
         headers: defaultHeaders
@@ -31,7 +29,7 @@ describe('ApiFetch', () => {
     })
 
     it('with custom headers', async () => {
-      const api = new ApiFetch()
+      const api = new ApiFetcher()
       const headers = {
         customHeader1: 'test test test',
         customHeader2: 'another test'
@@ -48,7 +46,7 @@ describe('ApiFetch', () => {
     })
 
     it('with custom options', async () => {
-      const api = new ApiFetch()
+      const api = new ApiFetcher()
       const options = {
         integrity: 'test test test',
         keepalive: false
@@ -74,10 +72,10 @@ describe('ApiFetch', () => {
         reqInfo.meta.counter = 123
         return reqInfo
       }
-      const fetcher = new ApiFetch({ requestEnhancers: [enhancer] })
-      const info = new ApiRequestInfo('/foo/path', 'GET')
+      const fetcher = new ApiFetcher({ requestEnhancers: [enhancer] })
+      const info = { meta: {}, path: '/foo/path', method: 'GET', options: {} }
 
-      const enhancedInfo = await fetcher.enhanceRequestInfo(info)
+      const enhancedInfo = await fetcher.applyRequestEnhancers(info)
       expect(enhancedInfo.options.test).toBeDefined()
       expect(enhancedInfo.options.test).toEqual('test')
       expect(enhancedInfo.meta.counter).toBeDefined()
@@ -89,15 +87,14 @@ describe('ApiFetch', () => {
     })
 
     it('responseHandler', async () => {
-      const handleResponse = (req, res) => {
-        res.response.test = 'test'
-        res.data = 'data'
-        return res
+      const handleResponse = (info) => {
+        info.response.test = 'test'
+        info.data = 'data'
+        return info
       }
-      const fetcher = new ApiFetch({ responseHandlers: [handleResponse] })
-      const reqInfo = new ApiRequestInfo('/foo/path', 'GET')
-      const resInfo = new ApiResponseInfo(new Response())
-      const handledInfo = await fetcher.applyResponseHandlers(reqInfo, resInfo)
+      const fetcher = new ApiFetcher({ responseHandlers: [handleResponse] })
+      const info = { meta: {}, path: '/foo/path', method: 'GET', options: {}, response: new Response() }
+      const handledInfo = await fetcher.applyResponseHandlers(info)
       expect(handledInfo.response.test).toBeDefined()
       expect(handledInfo.response.test).toEqual('test')
       expect(handledInfo.data).toBeDefined()

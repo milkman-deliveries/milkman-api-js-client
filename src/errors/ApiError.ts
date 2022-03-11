@@ -1,4 +1,4 @@
-import { ApiResponseError } from '../types/ApiResponseData'
+import { ApiResponseError } from '../fetch/types/ApiResponseError'
 
 export const apiErrorItemTypeRegex = /(\w*)__(\w*)/
 

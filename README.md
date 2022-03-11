@@ -23,15 +23,15 @@ Add dependency to the `package.json`
 
 ## API fetch
 
-`ApiFetch` class provides helpful methods to easily do API calls to milkman services.
+`ApiFetcher` class provides helpful methods to easily do API calls to milkman services.
 It uses a polyfill fetch library for cross-browser compatibility.
 
-### Create an instance of ApiFetch
+### Create an instance of ApiFetcher
 
 ```js
-import { ApiFetch } from 'milkman-api-js-client'
+import { ApiFetcher } from 'milkman-api-js-client'
 
-const api = new ApiFetch()
+const api = new ApiFetcher()
 ```
 
 #### Base URL
@@ -40,7 +40,7 @@ By default, the client will call APIs on `/`.
 Alternatively it is possible to specify a different `baseUrl`.
 
 ```js
-const api = new ApiFetch({
+const api = new ApiFetcher({
   baseUrl: 'https://test.milkmantechnologies.com/'
 })
 ```
@@ -89,7 +89,7 @@ The specified options will be passed down to the "fetch" primitive with no chang
 
 ### Middlewares
 
-The `ApiFetch` can also be _enhanced_ with custom behaviors:
+The `ApiFetcher` can also be _enhanced_ with custom behaviors:
 - Use `requestEnhancers` parameter to specify one or more functions for customizing request composition.
 - Use `responseHandlers` parameter to specify one or more functions for customizing response handling.
 
@@ -108,7 +108,7 @@ const retryIfFailed = async (request, response, info, _client) => {
   return response
 }
 
-const api = new ApiFetch({
+const api = new ApiFetcher({
   requestEnhancers: [addCustomHeader],
   responseHandlers: [retryIfFailed]
 })
@@ -126,9 +126,9 @@ This handler is useful to integrate with third-party library like `react-query`.
 
 ##### Example:
 ```js
-import { ApiFetch, parseContentOrThrowError } from 'milkman-api-js-client'
+import { ApiFetcher, parseContentOrThrowError } from 'milkman-api-js-client'
 
-const api = new ApiFetch({
+const api = new ApiFetcher({
   responseHandlers: [parseContentOrThrowError]
 })
 ```
@@ -435,9 +435,9 @@ To easily provide authorization token to any API request, use the optional `requ
 The `injectAuthorizationToken` function automatically sets the Cognito 'bearer' token in the request header.
 
 ```js
-import { ApiFetch, injectAuthorizationToken } from 'milkman-api-js-client'
+import { ApiFetcher, injectAuthorizationToken } from 'milkman-api-js-client'
 
-const api = new ApiFetch({
+const api = new ApiFetcher({
   requestEnhancers: [injectAuthorizationToken]
 })
 ```
@@ -495,9 +495,9 @@ To easily provide session token to any API request, use the optional `requestEnh
 The `injectLegacySessionToken` function automatically sets the Milkman 'session' token in the request header.
 
 ```js
-import { ApiFetch, injectLegacySessionToken } from 'milkman-api-js-client'
+import { ApiFetcher, injectLegacySessionToken } from 'milkman-api-js-client'
 
-const api = new ApiFetch({
+const api = new ApiFetcher({
   requestEnhancers: [injectLegacySessionToken]
 })
 ```

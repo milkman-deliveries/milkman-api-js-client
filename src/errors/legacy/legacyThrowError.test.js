@@ -1,20 +1,18 @@
-import { ApiResponseInfo } from '../../types/ApiResponseInfo'
 import { legacyThrowError } from './legacyThrowError'
 
 describe('legacyThrowError', () => {
 
-  const createResponseInfo = (data, init) => {
-    const response = new Response(JSON.stringify(data), init)
-    return new ApiResponseInfo(response, data)
+  const createResponseInfo = (responseData, init) => {
+    const response = new Response(JSON.stringify(responseData), init)
+    return { meta: {}, path: '/foo/path', method: 'GET', options: {}, response, responseData }
   }
 
   it('throw a generic error if response ok is set to false', async () => {
-    const responseData = {}
-    const responseInfo = createResponseInfo(responseData, { status: 400 })
+    const info = createResponseInfo({}, { status: 400 })
 
     expect.assertions(3);
     try {
-      await legacyThrowError(undefined, responseInfo, undefined)
+      await legacyThrowError(info, undefined)
     } catch(e) {
       expect(e).toEqual(new Error('milkman-api-js-client'))
       expect(e.status).toEqual(400)
@@ -23,12 +21,11 @@ describe('legacyThrowError', () => {
   })
 
   it('throw a generic error if response contains the errors property', async () => {
-    const responseData = { errors: [] }
-    const responseInfo = createResponseInfo(responseData)
+    const info = createResponseInfo({ errors: [] })
 
     expect.assertions(3);
     try {
-      await legacyThrowError(undefined, responseInfo, undefined)
+      await legacyThrowError(info, undefined)
     } catch(e) {
       expect(e).toEqual(new Error('milkman-api-js-client'))
       expect(e.status).toEqual(200)
@@ -37,12 +34,11 @@ describe('legacyThrowError', () => {
   })
 
   it('throw a generic error if response has success property set to false', async () => {
-    const responseData = { success: false }
-    const responseInfo = createResponseInfo(responseData)
+    const info = createResponseInfo({ success: false })
 
     expect.assertions(3);
     try {
-      await legacyThrowError(undefined, responseInfo, undefined)
+      await legacyThrowError(info, undefined)
     } catch(e) {
       expect(e).toEqual(new Error('milkman-api-js-client'))
       expect(e.status).toEqual(200)
@@ -54,11 +50,11 @@ describe('legacyThrowError', () => {
     const responseData = {
       errors: [{ code: 'foo', message: 'error description' }]
     }
-    const responseInfo = createResponseInfo(responseData)
+    const info = createResponseInfo(responseData)
 
     expect.assertions(5);
     try {
-      await legacyThrowError(undefined, responseInfo, undefined)
+      await legacyThrowError(info, undefined)
     } catch(e) {
       expect(e).toEqual(new Error('foo: error description'))
       expect(e.status).toEqual(200)
@@ -75,11 +71,11 @@ describe('legacyThrowError', () => {
         { code: 'foo456', message: 'error description 456' },
       ]
     }
-    const responseInfo = createResponseInfo(responseData)
+    const info = createResponseInfo(responseData)
 
     expect.assertions(7);
     try {
-      await legacyThrowError(undefined, responseInfo, undefined)
+      await legacyThrowError(info, undefined)
     } catch(e) {
       expect(e).toEqual(new Error('foo123: error description 123'))
       expect(e.status).toEqual(200)
@@ -92,8 +88,8 @@ describe('legacyThrowError', () => {
   })
 
   it('does not throw any error if response is ok', async () => {
-    const responseInfo = createResponseInfo({ success: true })
-    const handledInfo = await legacyThrowError(undefined, responseInfo, undefined)
-    expect(handledInfo).toEqual(responseInfo)
+    const info = createResponseInfo({ success: true })
+    const handledInfo = await legacyThrowError(info, undefined)
+    expect(handledInfo).toEqual(info)
   })
 })

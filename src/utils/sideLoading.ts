@@ -1,5 +1,5 @@
-import { Entity, ID_PROPERTY } from '../types/Entity'
-import { ID } from '../types/ID'
+import { Entity, ID_PROPERTY } from '../fetch/types/Entity'
+import { ID } from '../fetch/types/ID'
 
 type MappedEntities<T> = { [key: ID]: Entity<T> }
 

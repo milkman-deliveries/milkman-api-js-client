@@ -1,9 +1,4 @@
-export interface ApiResponseError {
-  type: string
-  text?: string
-  field?: string
-  value?: any
-}
+import { ApiResponseError } from './ApiResponseError'
 
 export interface ApiResponseData {
   errors?: ApiResponseError[]

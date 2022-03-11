@@ -1,4 +1,4 @@
-import { ApiResponseError } from '../types/ApiResponseData';
+import { ApiResponseError } from '../fetch/types/ApiResponseError';
 export declare const apiErrorItemTypeRegex: RegExp;
 export declare class ApiErrorItem {
     type: string;

@@ -1,9 +1,9 @@
 import 'isomorphic-fetch'
 import { legacyThrowError } from '../../errors/legacy/legacyThrowError'
-import { ApiFetch } from '../../fetch/ApiFetch'
+import { ApiFetcher } from '../../fetch/ApiFetcher'
 import { legacyParseContent } from '../../parse/legacy/legacyParseContent'
 import { TokenStore } from '../../storage/TokenStore'
-import { LegacyApiResponseResult } from '../../types/LegacyApiResponseData'
+import { LegacyApiResponseResult } from '../../fetch/types/LegacyApiResponseData'
 
 export const LEGACY_SESSION_TOKEN_KEY = 'MILKMAN_LEGACY_SESSION_TOKEN_KEY'
 
@@ -34,7 +34,7 @@ export class LegacyApiAuth<T extends TokenStore> {
 
   /** Calls POST /milkman/login, retrieving Milkman session token. */
   _login(params: LegacyLoginParams): Promise<string> {
-    const client = new ApiFetch({ baseUrl: this.baseUrl, responseHandlers: [legacyParseContent, legacyThrowError] })
+    const client = new ApiFetcher({ baseUrl: this.baseUrl, responseHandlers: [legacyParseContent, legacyThrowError] })
     return client.POST<LegacyLoginParams, LegacyApiResponseResult>('/milkman/login', params)
       .then((data) => data?.session)
   }

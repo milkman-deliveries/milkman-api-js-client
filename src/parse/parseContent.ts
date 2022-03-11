@@ -1,6 +1,5 @@
 import { ApiErrorCategory } from '../errors/ApiErrorCategory'
-import { ApiResponseInfo } from '../types/ApiResponseInfo'
-import { ResponseHandler } from '../types/ResponseHandler'
+import { ResponseHandler } from '../fetch/types/ResponseHandler'
 
 const malformedContentError = {
   errors: [{
@@ -8,18 +7,18 @@ const malformedContentError = {
   }],
 }
 
-export const parseContent: ResponseHandler<any, Response, object> = async (requestInfo, responseInfo) => {
-  let data
+export const parseContent: ResponseHandler<any, Response, object> = async (info) => {
+  let responseData
 
   // try to parse JSON response.
-  const bodyText = await responseInfo.response.text()
+  const bodyText = await info.response.text()
   if (bodyText) {
     try {
-      data = JSON.parse(bodyText)
+      responseData = JSON.parse(bodyText)
     } catch (e) {
-      data = malformedContentError
+      responseData = malformedContentError
     }
   }
 
-  return new ApiResponseInfo(responseInfo.response, data)
+  return { ...info, responseData }
 }
