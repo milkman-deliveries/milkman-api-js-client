@@ -26,12 +26,15 @@ describe('LegacyApiAuth', () => {
 
   describe('login()', () => {
     it('compose correct request', async () => {
-      const fetch = mockFetch((params) => ({
-        result: {
-          success: true,
-          session: 'foo session',
-          ...params,
-        },
+      const fetch = mockFetch((...params) => Promise.resolve({
+        ok: true,
+        json: () => ({
+          result: {
+            success: true,
+            session: 'foo session',
+            params,
+          },
+        })
       }))
       const auth = new LegacyApiAuth(authBasicConfig)
       const authParams = { username: 'username', password: 'password' }

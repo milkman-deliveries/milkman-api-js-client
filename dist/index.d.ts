@@ -1,4 +1,3 @@
-export * from './authentication/legacy/injectLegacySessionTokenFactory';
 export * from './authentication/legacy/LegacyApiAuth';
 export * from './authentication/ApiAuth';
 export * from './authentication/injectAuthorizationTokenFactory';
@@ -18,7 +17,8 @@ export * from './fetch/types/ID';
 export * from './fetch/types/LegacyApiResponseData';
 export * from './fetch/types/RequestEnhancer';
 export * from './fetch/types/ResponseHandler';
-export * from './fetch/ApiFetch';
+export * from './fetch/ApiExecution';
+export * from './fetch/ApiFetcher';
 export * from './fetch/ApiFilters';
 export * from './fetch/ApiLazyLoading';
 export * from './fetch/ApiPagination';

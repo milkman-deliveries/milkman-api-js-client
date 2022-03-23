@@ -1,6 +1,4 @@
 export interface ApiFetchRequestInfo<T_REQ> {
-    /** Additional support information */
-    meta: object;
     /** HTTP Request path */
     path: string;
     /** HTTP Request method */
@@ -8,7 +6,7 @@ export interface ApiFetchRequestInfo<T_REQ> {
     /** HTTP Request */
     request?: RequestInit;
     /** HTTP Request body data */
-    requestData?: T_REQ;
+    data?: T_REQ;
     /** HTTP Request options */
     options: Partial<RequestInit>;
 }

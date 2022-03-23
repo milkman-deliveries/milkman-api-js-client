@@ -7,18 +7,18 @@ const malformedContentError = {
   }],
 }
 
-export const parseContent: ResponseHandler<any, Response, object> = async (info) => {
-  let responseData
+export const parseContent: ResponseHandler<any, Response, object> = async (requestInfo, responseInfo) => {
+  let data
 
   // try to parse JSON response.
-  const bodyText = await info.response.text()
+  const bodyText = await responseInfo.response.text()
   if (bodyText) {
     try {
-      responseData = JSON.parse(bodyText)
+      data = JSON.parse(bodyText)
     } catch (e) {
-      responseData = malformedContentError
+      data = malformedContentError
     }
   }
 
-  return { ...info, responseData }
+  return { ...responseInfo, data }
 }

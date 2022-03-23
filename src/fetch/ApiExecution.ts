@@ -42,24 +42,6 @@ export class ApiExecution<T_REQ, T_RES> implements ApiFetcherConfig {
     this._retry = true
   }
 
-  get canGoOn(): boolean {
-    return !this._abort
-  }
-
-  get mustRestart(): boolean {
-    return this._retry
-  }
-
-  async _execStep<T>(func: () => Promise<T>): Promise<T> {
-    if (!this.canGoOn) return null
-    const promise: Promise<T> = func()
-    // @ts-ignore
-    promise.cancel = () => this._controller.abort()
-    return await promise
-  }
-
-  // ---------------------------------------------------------------------------------
-
   composeUrl(path: string): string {
     const parsedBaseUrl = this.baseUrl.replace(/\/*$/, '')
     const parsedPath = path.replace(/^\/*/, '')
@@ -97,16 +79,7 @@ export class ApiExecution<T_REQ, T_RES> implements ApiFetcherConfig {
     return handledResponseInfo
   }
 
-  // ---------------------------------------------------------------------------------
-
-  async _prefetch(
-    requestInfo: ApiFetchRequestInfo<T_REQ>
-  ): Promise<ApiFetchRequestInfo<any>> {
-    // apply any request enhancers to the initial request info
-    return this.applyRequestEnhancers(requestInfo)
-  }
-
-  async _fetch(
+  async fetch(
     requestInfo: ApiFetchRequestInfo<any>
   ): Promise<ApiFetchResponseInfo<Response>> {
     // compose URL considering baseUrl
@@ -119,24 +92,24 @@ export class ApiExecution<T_REQ, T_RES> implements ApiFetcherConfig {
     return { response, data: response } as ApiFetchResponseInfo<Response>
   }
 
-  async _postfetch(
-    requestInfo: ApiFetchRequestInfo<unknown>,
-    responseInfo: ApiFetchResponseInfo<Response>
-  ): Promise<ApiFetchResponseInfo<unknown>> {
-    // apply any response handler to the initial response info
-    return this.applyResponseHandlers(requestInfo, responseInfo)
+  async _execStep<T>(func: () => Promise<T>): Promise<T> {
+    if (this._abort) return null
+    const promise: Promise<T> = func()
+    // @ts-ignore
+    promise.cancel = () => this._controller.abort()
+    return await promise
   }
 
   async exec(): Promise<T_RES> {
     this.restore()
     const requestInfo = cloneDeep(this.originalRequestInfo)
 
-    const enhancedRequestInfo = await this._prefetch(requestInfo)
-    const responseInfo = await this._fetch(enhancedRequestInfo)
-    const handledResponseInfo = await this._postfetch(enhancedRequestInfo, responseInfo)
+    const enhancedRequestInfo = await this.applyRequestEnhancers(requestInfo)
+    const responseInfo = await this.fetch(enhancedRequestInfo)
+    const handledResponseInfo = await this.applyResponseHandlers(enhancedRequestInfo, responseInfo)
     const res = handledResponseInfo.data as T_RES
 
-    if (this.mustRestart) return this.exec()
+    if (this._retry) return this.exec()
 
     return res
   }

@@ -32,5 +32,8 @@
     "rollup-plugin-typescript2": "^0.30.0",
     "sinon": "^13.0.1",
     "typescript": "^4.4.2"
+  },
+  "peerDependencies": {
+    "abortcontroller-polyfill": "^1.7.3"
   }
 }

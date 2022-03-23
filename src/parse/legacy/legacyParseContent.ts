@@ -6,20 +6,20 @@ const malformedContentError = {
   }],
 }
 
-export const legacyParseContent: ResponseHandler<any, Response, object> = async (info) => {
-  let responseData
+export const legacyParseContent: ResponseHandler<any, Response, object> = async (requestInfo, responseInfo) => {
+  let data
 
   // try to parse JSON response.
   try {
-    const json = await info.response.json()
+    const json = await responseInfo.response.json()
     if (json.hasOwnProperty('result')) {
-      responseData = json.result
+      data = json.result
     } else {
-      responseData = malformedContentError
+      data = malformedContentError
     }
   } catch (e) {
-    responseData = malformedContentError
+    data = malformedContentError
   }
 
-  return { ...info, responseData }
+  return { ...responseInfo, data }
 }

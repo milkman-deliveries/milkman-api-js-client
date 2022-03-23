@@ -2,9 +2,9 @@ import { legacyThrowError } from './legacyThrowError'
 
 describe('legacyThrowError', () => {
 
-  const createResponseInfo = (responseData, init) => {
-    const response = new Response(JSON.stringify(responseData), init)
-    return { meta: {}, path: '/foo/path', method: 'GET', options: {}, response, responseData }
+  const createResponseInfo = (data, init) => {
+    const response = new Response(JSON.stringify(data), init)
+    return { response, data }
   }
 
   it('throw a generic error if response ok is set to false', async () => {
@@ -12,7 +12,7 @@ describe('legacyThrowError', () => {
 
     expect.assertions(3);
     try {
-      await legacyThrowError(info, undefined)
+      await legacyThrowError(undefined, info)
     } catch(e) {
       expect(e).toEqual(new Error('milkman-api-js-client'))
       expect(e.status).toEqual(400)
@@ -25,7 +25,7 @@ describe('legacyThrowError', () => {
 
     expect.assertions(3);
     try {
-      await legacyThrowError(info, undefined)
+      await legacyThrowError(undefined, info)
     } catch(e) {
       expect(e).toEqual(new Error('milkman-api-js-client'))
       expect(e.status).toEqual(200)
@@ -38,7 +38,7 @@ describe('legacyThrowError', () => {
 
     expect.assertions(3);
     try {
-      await legacyThrowError(info, undefined)
+      await legacyThrowError(undefined, info)
     } catch(e) {
       expect(e).toEqual(new Error('milkman-api-js-client'))
       expect(e.status).toEqual(200)
@@ -54,7 +54,7 @@ describe('legacyThrowError', () => {
 
     expect.assertions(5);
     try {
-      await legacyThrowError(info, undefined)
+      await legacyThrowError(undefined, info)
     } catch(e) {
       expect(e).toEqual(new Error('foo: error description'))
       expect(e.status).toEqual(200)
@@ -75,7 +75,7 @@ describe('legacyThrowError', () => {
 
     expect.assertions(7);
     try {
-      await legacyThrowError(info, undefined)
+      await legacyThrowError(undefined, info)
     } catch(e) {
       expect(e).toEqual(new Error('foo123: error description 123'))
       expect(e.status).toEqual(200)
@@ -89,7 +89,7 @@ describe('legacyThrowError', () => {
 
   it('does not throw any error if response is ok', async () => {
     const info = createResponseInfo({ success: true })
-    const handledInfo = await legacyThrowError(info, undefined)
+    const handledInfo = await legacyThrowError(undefined, info)
     expect(handledInfo).toEqual(info)
   })
 })

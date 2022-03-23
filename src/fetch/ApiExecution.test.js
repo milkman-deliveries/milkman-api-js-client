@@ -1,8 +1,8 @@
 import Sinon from 'sinon'
 import { mockAbortController } from '../../jest/mocks/AbortController.mock'
+import { mockFetch } from '../../jest/mocks/fetch.mock'
 import { defaultHeaders } from '../utils/defaultHeaders'
 import { ApiExecution } from './ApiExecution'
-import { ApiFetcher } from './ApiFetcher'
 
 const sandbox = Sinon.createSandbox()
 
@@ -11,15 +11,21 @@ describe('ApiExecution', () => {
   let enhancer2
   let handler1
   let handler2
-  let abort;
+  let abort
+  let fetch
 
   beforeEach(() => {
-    enhancer1 = sandbox.stub()
-    enhancer2 = sandbox.stub()
-    handler1 = sandbox.stub()
-    handler2 = sandbox.stub()
+    enhancer1 = sandbox.stub().callsFake((req) => Promise.resolve({ ...req, foo: 'foo1' }))
+    enhancer2 = sandbox.stub().callsFake((req) => Promise.resolve({ ...req, foo: 'foo2' }))
+    handler1 = sandbox.stub().callsFake((req, res) => Promise.resolve({ ...res, baz: 'baz1' }))
+    handler2 = sandbox.stub().callsFake((req, res) => Promise.resolve({ ...res, baz: 'baz2' }))
     abort = sandbox.stub()
+    fetch = sandbox.stub().callsFake(() => ({
+      ok: true,
+      json: () => 'foo data',
+    }))
 
+    mockFetch(fetch)
     mockAbortController(abort)
   })
 
@@ -32,7 +38,7 @@ describe('ApiExecution', () => {
       baseUrl: 'http://www.test.com',
       requestEnhancers: [enhancer1, enhancer2],
       responseHandlers: [handler1, handler2],
-      ...customConfig
+      ...customConfig,
     }
     return new ApiExecution(requestInfo, fetcherConfig)
   }
@@ -71,7 +77,7 @@ describe('ApiExecution', () => {
       const execution = createApiExecution()
       const headers = {
         customHeader1: 'test test test',
-        customHeader2: 'another test'
+        customHeader2: 'another test',
       }
       const req = await execution.composeRequest({ method: 'GET', path: '/', options: { headers } })
       expect(req).toEqual({
@@ -86,7 +92,7 @@ describe('ApiExecution', () => {
       const execution = createApiExecution()
       const options = {
         integrity: 'test test test',
-        keepalive: false
+        keepalive: false,
       }
       const req = await execution.composeRequest({ method: 'GET', path: '/', options })
       expect(req).toEqual({
@@ -94,52 +100,81 @@ describe('ApiExecution', () => {
         headers: defaultHeaders,
         body: undefined,
         signal: 'foo signal',
-        ...options
+        ...options,
       })
     })
   })
 
-  // describe('applyRequestEnhancers', () => {
-  //   it('basic', () => {
-  //     const execution = createApiExecution()
-  //   })
-  // })
-  //
-  // describe('middleware', () => {
-  //
-  //   xit('requestEnhancer', async () => {
-  //     const enhancer = (reqInfo) => {
-  //       reqInfo.options.test = 'test'
-  //       reqInfo.meta.counter = 123
-  //       return reqInfo
-  //     }
-  //     const fetcher = new ApiFetcher({ requestEnhancers: [enhancer] })
-  //     const info = { meta: {}, path: '/foo/path', method: 'GET', options: {} }
-  //
-  //     const enhancedInfo = await fetcher.applyRequestEnhancers(info)
-  //     expect(enhancedInfo.options.test).toBeDefined()
-  //     expect(enhancedInfo.options.test).toEqual('test')
-  //     expect(enhancedInfo.meta.counter).toBeDefined()
-  //     expect(enhancedInfo.meta.counter).toEqual(123)
-  //
-  //     const req = await fetcher.composeRequest(info, undefined)
-  //     expect(req.test).toBeDefined()
-  //     expect(req.test).toEqual('test')
-  //   })
-  //
-  //   xit('responseHandler', async () => {
-  //     const handleResponse = (info) => {
-  //       info.response.test = 'test'
-  //       info.data = 'data'
-  //       return info
-  //     }
-  //     const fetcher = new ApiFetcher({ responseHandlers: [handleResponse] })
-  //     const info = { meta: {}, path: '/foo/path', method: 'GET', options: {}, response: new Response() }
-  //     const handledInfo = await fetcher.applyResponseHandlers(info)
-  //     expect(handledInfo.response.test).toBeDefined()
-  //     expect(handledInfo.response.test).toEqual('test')
-  //     expect(handledInfo.data).toBeDefined()
-  //     expect(handledInfo.data).toEqual('data')
-  //   })
-  // })
+  describe('applyRequestEnhancers', () => {
+    it('enhance initial request info', async () => {
+      const execution = createApiExecution()
+      const info = { method: 'GET', path: 'foo/path', options: {} }
+      const enhancedInfo = await execution.applyRequestEnhancers(info)
+      expect(enhancer1.calledOnce).toBeTruthy()
+      expect(enhancer1.firstCall.args[0]).toEqual(info)
+      expect(enhancer2.calledOnce).toBeTruthy()
+      expect(enhancer2.firstCall.args[0]).toEqual({ ...info, foo: 'foo1' })
+      expect(enhancedInfo).toEqual({ ...info, foo: 'foo2' })
+    })
+  })
+
+  describe('applyResponseHandlers', () => {
+    it('handle initial response info', async () => {
+      const execution = createApiExecution()
+      const requestInfo = { method: 'GET', path: 'foo/path', options: {} }
+      const response = new Response('')
+      const responseInfo = { response, data: response }
+      const handledInfo = await execution.applyResponseHandlers(requestInfo, responseInfo)
+      expect(handler1.calledOnce).toBeTruthy()
+      expect(handler1.firstCall.args[0]).toEqual(requestInfo)
+      expect(handler1.firstCall.args[1]).toEqual(responseInfo)
+      expect(handler2.calledOnce).toBeTruthy()
+      expect(handler2.firstCall.args[0]).toEqual(requestInfo)
+      expect(handler2.firstCall.args[1]).toEqual({ ...responseInfo, baz: 'baz1' })
+      expect(handledInfo).toEqual({ ...responseInfo, baz: 'baz2' })
+    })
+  })
+
+  describe('_execStep', () => {
+    it('resolve the promise', async () => {
+      const execution = createApiExecution()
+      const promise = sandbox.stub().callsFake(() => Promise.resolve('foo result'))
+      const result = await execution._execStep(promise)
+      expect(result).toEqual('foo result')
+    })
+
+    it('returns null if _abort flag is set to true', async () => {
+      const execution = createApiExecution()
+      execution._abort = true
+      const promise = sandbox.stub().callsFake(() => Promise.resolve('foo result'))
+      const result = await execution._execStep(promise)
+      expect(result).toBeNull()
+    })
+  })
+
+  describe('fetch', () => {
+    it('calls fetch', async () => {
+      const execution = createApiExecution()
+      const responseInfo = await execution.fetch({ method: 'GET', path: '/', options: {} })
+      expect(fetch.calledOnce).toBeTruthy()
+      expect(responseInfo.response.json()).toEqual('foo data')
+    })
+  })
+
+  describe('exec', () => {
+    it('calls functionalities in the correct order', async () => {
+      const execution = createApiExecution({ method: 'GET', path: '/', options: {} })
+      const result = await execution.exec()
+      // apply enhancers
+      expect(enhancer1.calledOnce).toBeTruthy()
+      expect(enhancer2.calledOnce).toBeTruthy()
+      // fetch
+      expect(fetch.calledOnce).toBeTruthy()
+      // apply handlers
+      expect(handler1.calledOnce).toBeTruthy()
+      expect(handler2.calledOnce).toBeTruthy()
+      expect(result.json()).toEqual('foo data')
+    })
+  })
+
 })

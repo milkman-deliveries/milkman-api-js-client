@@ -1,7 +1,6 @@
-import { ApiFetchRequestInfo } from './ApiFetchRequestInfo';
-export interface ApiFetchResponseInfo<T_REQ, T_RES> extends ApiFetchRequestInfo<T_REQ> {
+export interface ApiFetchResponseInfo<T_RES> {
     /** HTTP response */
-    response: Response;
+    response?: Response;
     /** HTTP Response body data */
-    responseData?: T_RES;
+    data?: T_RES;
 }
