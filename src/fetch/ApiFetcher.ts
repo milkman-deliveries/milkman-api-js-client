@@ -26,27 +26,27 @@ export class ApiFetcher {
     return execution.exec()
   }
 
-  async GET<T_REQ, T_RES>(path: string, options?: any): Promise<T_RES> {
+  async GET<T_REQ, T_RES>(path: string, options: Partial<RequestInit> = {}): Promise<T_RES> {
     const info: ApiFetchRequestInfo<T_REQ> = { path, method: 'GET', options }
     return this.fetch(info)
   }
 
-  async POST<T_REQ, T_RES>(path: string, data: T_REQ, options?: any): Promise<T_RES> {
+  async POST<T_REQ, T_RES>(path: string, data: T_REQ, options: Partial<RequestInit> = {}): Promise<T_RES> {
     const info: ApiFetchRequestInfo<T_REQ> = { path, method: 'POST', data, options }
     return this.fetch(info)
   }
 
-  async PUT<T_REQ, T_RES>(path: string, data: T_REQ, options?: any): Promise<T_RES> {
+  async PUT<T_REQ, T_RES>(path: string, data: T_REQ, options: Partial<RequestInit> = {}): Promise<T_RES> {
     const info: ApiFetchRequestInfo<T_REQ> = { path, method: 'PUT', data, options }
     return this.fetch(info)
   }
 
-  async PATCH<T_REQ, T_RES>(path: string, data: T_REQ, options?: any): Promise<T_RES> {
+  async PATCH<T_REQ, T_RES>(path: string, data: T_REQ, options: Partial<RequestInit> = {}): Promise<T_RES> {
     const info: ApiFetchRequestInfo<T_REQ> = { path, method: 'PATCH', data, options }
     return this.fetch(info)
   }
 
-  async DELETE<T_REQ, T_RES>(path: string, options?: any): Promise<T_RES> {
+  async DELETE<T_REQ, T_RES>(path: string, options: Partial<RequestInit> = {}): Promise<T_RES> {
     const info: ApiFetchRequestInfo<T_REQ> = { path, method: 'DELETE', options }
     return this.fetch(info)
   }
