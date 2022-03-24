@@ -175,6 +175,48 @@ describe('ApiExecution', () => {
       expect(handler2.calledOnce).toBeTruthy()
       expect(result.json()).toEqual('foo data')
     })
+
+    it('handles stop triggers', async () => {
+      const fooEnhancer = sandbox.stub().callsFake(async (req, _exec) => {
+        _exec.stop()
+        return null
+      })
+      const execution = createApiExecution(
+        { method: 'GET', path: '/', options: {} },
+        { requestEnhancers: [fooEnhancer] }
+      )
+      const result = await execution.exec()
+      // apply enhancers
+      expect(fooEnhancer.calledOnce).toBeTruthy()
+      // fetch
+      expect(fetch.callCount).toEqual(0)
+
+      expect(result).toEqual(null)
+    })
+
+    it('handles retry triggers', async () => {
+      const fooEnhancer = sandbox.stub().callsFake(async (req, _exec) => {
+        if (!_exec.meta.isRetry) {
+          _exec.stop()
+          _exec.retry()
+          _exec.meta.isRetry = true
+          return null
+        }
+        return req;
+      })
+      const execution = createApiExecution(
+        { method: 'GET', path: '/', options: {} },
+        { requestEnhancers: [fooEnhancer] }
+      )
+      const result = await execution.exec()
+      // first exec
+      expect(fooEnhancer.firstCall).toBeTruthy()
+      // retry
+      expect(fooEnhancer.secondCall).toBeTruthy()
+      expect(fetch.firstCall).toBeTruthy()
+
+      expect(result.json()).toEqual('foo data')
+    })
   })
 
 })

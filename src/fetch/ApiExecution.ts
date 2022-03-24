@@ -87,7 +87,7 @@ export class ApiExecution<T_REQ, T_RES> implements ApiFetcherConfig {
     // compose the request with the final (enhanced) request info
     const request = this.composeRequest(requestInfo)
     // do the request
-    const response = await this._execStep(() => fetch(url, request))
+    const response = await fetch(url, request)
     // compose response info
     return { response, data: response } as ApiFetchResponseInfo<Response>
   }
@@ -105,9 +105,9 @@ export class ApiExecution<T_REQ, T_RES> implements ApiFetcherConfig {
     const requestInfo = cloneDeep(this.originalRequestInfo)
 
     const enhancedRequestInfo = await this.applyRequestEnhancers(requestInfo)
-    const responseInfo = await this.fetch(enhancedRequestInfo)
+    const responseInfo = await this._execStep(() => this.fetch(enhancedRequestInfo))
     const handledResponseInfo = await this.applyResponseHandlers(enhancedRequestInfo, responseInfo)
-    const res = handledResponseInfo.data as T_RES
+    const res = await this._execStep(async () => handledResponseInfo.data as T_RES)
 
     if (this._retry) return this.exec()
 

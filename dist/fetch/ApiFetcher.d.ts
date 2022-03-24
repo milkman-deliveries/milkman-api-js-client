@@ -15,9 +15,9 @@ export declare class ApiFetcher {
     config: ApiFetcherConfig;
     constructor(config?: ApiFetcherConfig);
     fetch<T_REQ, T_RES>(info: ApiFetchRequestInfo<T_REQ>): Promise<T_RES>;
-    GET<T_REQ, T_RES>(path: string, options?: any): Promise<T_RES>;
-    POST<T_REQ, T_RES>(path: string, data: T_REQ, options?: any): Promise<T_RES>;
-    PUT<T_REQ, T_RES>(path: string, data: T_REQ, options?: any): Promise<T_RES>;
-    PATCH<T_REQ, T_RES>(path: string, data: T_REQ, options?: any): Promise<T_RES>;
-    DELETE<T_REQ, T_RES>(path: string, options?: any): Promise<T_RES>;
+    GET<T_REQ, T_RES>(path: string, options?: Partial<RequestInit>): Promise<T_RES>;
+    POST<T_REQ, T_RES>(path: string, data: T_REQ, options?: Partial<RequestInit>): Promise<T_RES>;
+    PUT<T_REQ, T_RES>(path: string, data: T_REQ, options?: Partial<RequestInit>): Promise<T_RES>;
+    PATCH<T_REQ, T_RES>(path: string, data: T_REQ, options?: Partial<RequestInit>): Promise<T_RES>;
+    DELETE<T_REQ, T_RES>(path: string, options?: Partial<RequestInit>): Promise<T_RES>;
 }
