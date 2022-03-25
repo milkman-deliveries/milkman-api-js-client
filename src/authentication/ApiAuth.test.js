@@ -33,7 +33,10 @@ describe('ApiAuth', () => {
 
   describe('cognitoLogin()', () => {
     it('compose correct request', () => {
-      const fetch = mockFetch((...args) => ({ AuthenticationResult: args }))
+      const fetch = mockFetch((...args) => Promise.resolve({
+        ok: true,
+        json: () => ({ AuthenticationResult: args })
+      }))
       const auth = new ApiAuth(authBasicConfig)
       auth
         ._cognitoLogin('username', 'password')
@@ -59,7 +62,10 @@ describe('ApiAuth', () => {
 
   describe('cognitoRefresh()', () => {
     it('compose correct request', () => {
-      const fetch = mockFetch((...args) => ({ AuthenticationResult: args }))
+      const fetch = mockFetch((...args) => Promise.resolve({
+        ok: true,
+        json: () => ({ AuthenticationResult: args })
+      }))
       const auth = new ApiAuth(authBasicConfig)
       auth
         ._cognitoRefresh()

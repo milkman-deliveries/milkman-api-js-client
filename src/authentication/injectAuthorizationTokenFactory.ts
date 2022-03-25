@@ -1,10 +1,10 @@
 import { TokenStore } from '../storage/TokenStore'
-import { RequestEnhancer } from '../types/RequestEnhancer'
+import { RequestEnhancer } from '../fetch/types/RequestEnhancer'
 
-export const injectAuthorizationTokenFactory = <T extends TokenStore>(idTokenStore: T): RequestEnhancer<any> => (
-  async request => {
-    if (!request.headers) request.headers = {}
-    request.headers['authorization'] = `Bearer ${idTokenStore.retrieve()}`
-    return request
+export const injectAuthorizationTokenFactory = <T extends TokenStore, T_REQ>(idTokenStore: T): RequestEnhancer<T_REQ, T_REQ> => (
+  async (requestInfo) => {
+    if (!requestInfo.options.headers) requestInfo.options.headers = {}
+    requestInfo.options.headers['authorization'] = `Bearer ${idTokenStore.retrieve()}`
+    return requestInfo
   }
 )

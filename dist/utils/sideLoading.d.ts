@@ -1,5 +1,5 @@
-import { Entity } from '../types/Entity';
-import { ID } from '../types/ID';
+import { Entity } from '../fetch/types/Entity';
+import { ID } from '../fetch/types/ID';
 declare type MappedEntities<T> = {
     [key: ID]: Entity<T>;
 };

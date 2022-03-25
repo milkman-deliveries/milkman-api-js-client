@@ -1,6 +1,6 @@
-import { LegacyApiAuth } from '../../../dist'
-import { mockFetch } from '../../jest/mocks/fetch.mock'
-import { ApiAuth, COGNITO_ENDPOINT, COGNITO_ID_TOKEN_KEY, COGNITO_REFRESH_TOKEN_KEY } from './ApiAuth'
+import { mockFetch } from '../../../jest/mocks/fetch.mock'
+import { defaultHeaders } from '../../utils/defaultHeaders'
+import { LEGACY_SESSION_TOKEN_KEY, LegacyApiAuth } from './LegacyApiAuth'
 
 class MockedTokenStore {
   constructor(key, val) {
@@ -18,67 +18,33 @@ class MockedTokenStore {
 }
 
 const authBasicConfig = {
-  application: 'test',
-  clientId: 'test123',
-  idTokenStore: new MockedTokenStore(COGNITO_ID_TOKEN_KEY, ''),
-  refreshTokenStore: new MockedTokenStore(COGNITO_REFRESH_TOKEN_KEY, 'testRefreshToken')
+  baseUrl: 'http://base.url',
+  sessionTokenStore: new MockedTokenStore(LEGACY_SESSION_TOKEN_KEY, ''),
 }
 
 describe('LegacyApiAuth', () => {
-  describe('authUrl', () => {
-    it('compose application auth endpoint', () => {
+
+  describe('login()', () => {
+    it('compose correct request', async () => {
+      const fetch = mockFetch((...params) => Promise.resolve({
+        ok: true,
+        json: () => ({
+          result: {
+            success: true,
+            session: 'foo session',
+            params,
+          },
+        })
+      }))
       const auth = new LegacyApiAuth(authBasicConfig)
-      expect(auth.cognitoAuthUrl).toEqual(`${COGNITO_ENDPOINT}test/login`)
-    })
-  })
-
-  describe('cognitoLogin()', () => {
-    it('compose correct request', () => {
-      const fetch = mockFetch((...args) => ({ AuthenticationResult: args }))
-      const auth = new ApiAuth(authBasicConfig)
-      auth
-        ._cognitoLogin('username', 'password')
-        .then(([url, options]) => {
-          expect(fetch).toHaveBeenCalled()
-          expect(options).toEqual({
-            method: 'POST',
-            headers: {
-              Accept: 'application/json'
-            },
-            body: JSON.stringify({
-              ClientId: 'test123',
-              AuthFlow: 'USER_PASSWORD_AUTH',
-              AuthParameters: {
-                USERNAME: 'username',
-                PASSWORD: 'password'
-              }
-            })
-          })
-        })
-    })
-  })
-
-  describe('cognitoRefresh()', () => {
-    it('compose correct request', () => {
-      const fetch = mockFetch((...args) => ({ AuthenticationResult: args }))
-      const auth = new ApiAuth(authBasicConfig)
-      auth
-        ._cognitoRefresh()
-        .then(([url, options]) => {
-          expect(fetch).toHaveBeenCalled()
-          expect(url).toEqual(`${COGNITO_ENDPOINT}test/login`)
-          expect(options).toEqual({
-            method: 'POST',
-            headers: { Accept: 'application/json' },
-            body: JSON.stringify({
-              ClientId: 'test123',
-              AuthFlow: 'REFRESH_TOKEN_AUTH',
-              AuthParameters: {
-                REFRESH_TOKEN: 'testRefreshToken'
-              }
-            })
-          })
-        })
+      const authParams = { username: 'username', password: 'password' }
+      const res = await auth._login(authParams)
+      expect(fetch).toHaveBeenCalled()
+      expect(fetch.mock.lastCall[0]).toEqual('http://base.url/milkman/login')
+      expect(fetch.mock.lastCall[1].method).toEqual('POST')
+      expect(fetch.mock.lastCall[1].headers).toEqual(defaultHeaders)
+      expect(fetch.mock.lastCall[1].body).toEqual(JSON.stringify(authParams))
+      expect(res).toEqual('foo session')
     })
   })
 })
