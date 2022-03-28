@@ -1,6 +1,6 @@
 {
-  "name": "@milkman/milkman-api-js-client",
-  "version": "1.0.4",
+  "name": "@milkman/api-js-client",
+  "version": "1.0.5",
   "main": "dist/index.min.js",
   "module": "dist/index.esm.min.js",
   "types": "dist/index.d.ts",

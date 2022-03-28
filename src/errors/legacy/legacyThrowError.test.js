@@ -14,7 +14,7 @@ describe('legacyThrowError', () => {
     try {
       await legacyThrowError(undefined, info)
     } catch(e) {
-      expect(e).toEqual(new Error('milkman-api-js-client'))
+      expect(e).toEqual(new Error('@milkman/api-js-client'))
       expect(e.status).toEqual(400)
       expect(e.items).toEqual([])
     }
@@ -27,7 +27,7 @@ describe('legacyThrowError', () => {
     try {
       await legacyThrowError(undefined, info)
     } catch(e) {
-      expect(e).toEqual(new Error('milkman-api-js-client'))
+      expect(e).toEqual(new Error('@milkman/api-js-client'))
       expect(e.status).toEqual(200)
       expect(e.items).toEqual([])
     }
@@ -40,7 +40,7 @@ describe('legacyThrowError', () => {
     try {
       await legacyThrowError(undefined, info)
     } catch(e) {
-      expect(e).toEqual(new Error('milkman-api-js-client'))
+      expect(e).toEqual(new Error('@milkman/api-js-client'))
       expect(e.status).toEqual(200)
       expect(e.items).toEqual([])
     }

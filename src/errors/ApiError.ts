@@ -29,7 +29,7 @@ export class ApiError extends Error {
   items: ApiErrorItem[]
 
   constructor(status: number, errors: ApiResponseError[] = []) {
-    super(errors.length ? `${errors[0].type}: ${errors[0].text}` : 'milkman-api-js-client')
+    super(errors.length ? `${errors[0].type}: ${errors[0].text}` : '@milkman/api-js-client')
     this.status = status
     this.items = errors.map(err => new ApiErrorItem(err))
   }

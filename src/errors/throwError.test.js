@@ -15,7 +15,7 @@ describe('throwError', () => {
     try {
       await throwError(undefined, info)
     } catch(e) {
-      expect(e).toEqual(new Error('milkman-api-js-client'))
+      expect(e).toEqual(new Error('@milkman/api-js-client'))
       expect(e.status).toEqual(400)
       expect(e.items).toEqual([])
     }
@@ -29,7 +29,7 @@ describe('throwError', () => {
     try {
       await throwError(undefined, info)
     } catch(e) {
-      expect(e).toEqual(new Error('milkman-api-js-client'))
+      expect(e).toEqual(new Error('@milkman/api-js-client'))
       expect(e.status).toEqual(200)
       expect(e.items).toEqual([])
     }

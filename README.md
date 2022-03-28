@@ -1,4 +1,4 @@
-# milkman-api-js-client
+# @milkman/api-js-client
 
 ## Setup project
 
@@ -18,7 +18,7 @@ To do so, run `yarn bundle`.
 Add dependency to the `package.json`
 
 ```
-"milkman-api-js-client": "git+https://github.com/milkman-deliveries/milkman-api-js-client.git"
+"@milkman/api-js-client": "git+https://github.com/milkman-deliveries/milkman-api-js-client.git"
 ```
 
 ## API fetch
@@ -29,7 +29,7 @@ It uses a polyfill fetch library for cross-browser compatibility.
 ### Create an instance of ApiFetcher
 
 ```js
-import { ApiFetcher } from 'milkman-api-js-client'
+import { ApiFetcher } from '@milkman/api-js-client'
 
 const api = new ApiFetcher()
 ```
@@ -126,7 +126,7 @@ This handler is useful to integrate with third-party library like `react-query`.
 
 ##### Example:
 ```js
-import { ApiFetcher, parseContentOrThrowError } from 'milkman-api-js-client'
+import { ApiFetcher, parseContentOrThrowError } from '@milkman/api-js-client'
 
 const api = new ApiFetcher({
   responseHandlers: [parseContentOrThrowError]
@@ -404,7 +404,7 @@ methods to manage the user authentication.
 #### Create an instance of ApiAuth
 
 ```js
-import { ApiAuth } from 'milkman-api-js-client'
+import { ApiAuth } from '@milkman/api-js-client'
 
 const auth = new ApiAuth({
   application: 'myApplication',
@@ -435,7 +435,7 @@ To easily provide authorization token to any API request, use the optional `requ
 The `injectAuthorizationToken` function automatically sets the Cognito 'bearer' token in the request header.
 
 ```js
-import { ApiFetcher, injectAuthorizationToken } from 'milkman-api-js-client'
+import { ApiFetcher, injectAuthorizationToken } from '@milkman/api-js-client'
 
 const api = new ApiFetcher({
   requestEnhancers: [injectAuthorizationToken]
@@ -466,7 +466,7 @@ To use the old authentication based on an internal session token use the `Legacy
 #### Configure ApiAuth
 
 ```js
-import { LegacyApiAuth } from 'milkman-api-js-client'
+import { LegacyApiAuth } from '@milkman/api-js-client'
 
 const auth = new LegacyApiAuth()
 ```
@@ -495,7 +495,7 @@ To easily provide session token to any API request, use the optional `requestEnh
 The `injectLegacySessionToken` function automatically sets the Milkman 'session' token in the request header.
 
 ```js
-import { ApiFetcher, injectLegacySessionToken } from 'milkman-api-js-client'
+import { ApiFetcher, injectLegacySessionToken } from '@milkman/api-js-client'
 
 const api = new ApiFetcher({
   requestEnhancers: [injectLegacySessionToken]
