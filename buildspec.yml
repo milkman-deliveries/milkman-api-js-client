@@ -6,8 +6,10 @@ phases:
 
   build:
     commands:
+
       - npm run co:login
 
+      - npm install
       - npm test 
       - npm run bundle
       - npm publish

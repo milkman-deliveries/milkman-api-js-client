@@ -6,6 +6,8 @@ phases:
 
   build:
     commands:
+      - npm install
+
       - npm test 
 
       - VERSION=$(npm show . version)
