@@ -1,0 +1,15 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      nodejs: 12
+
+  build:
+    commands:
+
+      - npm run co:login
+
+      - npm install
+      - npm test 
+      - npm run bundle
+      - npm publish
