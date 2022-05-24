@@ -1,0 +1,22 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      nodejs: 12
+
+  build:
+    commands:
+      - VERSION=$(jq .version package.json)
+      - ALL_VERSIONS=$(aws codeartifact list-package-versions --package milkman-api-js-client --namespace milkman --domain milkmantechnologies --repository milkman --format npm --query 'versions[*].[version]' --output text)
+      - PRESENT=$(echo "$ALL_VERSIONS" | sed -n "/$VERSION/p") 
+
+      - |
+        if [ -n "$ALREADY_DEPLOYED" ]; then
+          echo "ERROR: Version $VERSION already deployed on CodeArtifact! Please update the version of your package"
+          exit 1
+        fi
+
+      - npm install
+      - npm test 
+
+      - echo "Test passed and version is ok"
