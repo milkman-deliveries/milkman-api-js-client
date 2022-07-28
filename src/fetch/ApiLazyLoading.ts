@@ -1,5 +1,5 @@
 /**
- * An utility to compose query-strings for API lazy-loading.
+ * Utility to compose query-strings for API lazy-loading.
  */
 export class ApiLazyLoading {
   skip: number = 0

@@ -9,7 +9,7 @@ export interface ApiSortRule {
 }
 
 /**
- * An utility to compose query-strings for sorting APIs.
+ * Utility to compose query-strings for sorting APIs.
  */
 export class ApiSort {
   rules: ApiSortRule[] = []
