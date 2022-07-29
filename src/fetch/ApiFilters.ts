@@ -21,7 +21,7 @@ export interface ApiFilter {
 }
 
 /**
- * An utility to compose query-strings for filtering APIs.
+ * Utility to compose query-strings for filtering APIs.
  */
 export class ApiFilters {
 

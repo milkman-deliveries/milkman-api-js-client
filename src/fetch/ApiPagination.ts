@@ -1,5 +1,5 @@
 /**
- * An utility to compose query-strings for API pagination.
+ * Utility to compose query-strings for API pagination.
  */
 export class ApiPagination {
   pageSize: number
